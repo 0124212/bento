@@ -550,85 +550,8 @@
   if (saved === 'light' || (!saved && prefersLight)) root.dataset.theme = 'light';
 })();
 </script>
+<script src="repos.js"></script>
 <script>
-const repos = [
-  { rank: 1, name: 'build-your-own-x', owner: 'codecrafters-io', lang: 'Markdown', color: '#e34c26',
-    desc: 'Master programming by recreating your favorite technologies from scratch. The repo that started a philosophy: understand things by building them yourself.',
-    stars: 538865, forks: 50883, size: 'xl', avatar: '🛠', glow: 'rgba(139,92,246,0.22)' },
-  { rank: 2, name: 'awesome', owner: 'sindresorhus', lang: '', color: '#1f6feb',
-    desc: 'The gold-standard curated list of awesome lists about all kinds of interesting topics.',
-    stars: 494676, forks: 36333, size: 'md', avatar: '😎', glow: 'rgba(251,191,36,0.20)' },
-  { rank: 3, name: 'public-apis', owner: 'public-apis', lang: 'Python', color: '#3572A5',
-    desc: 'A collective list of free APIs for use in software and web development.',
-    stars: 455532, forks: 50239, size: 'md', avatar: '🔌', glow: 'rgba(34,211,238,0.18)' },
-  { rank: 4, name: 'freeCodeCamp', owner: 'freeCodeCamp', lang: 'TypeScript', color: '#3178c6',
-    desc: 'freeCodeCamp.org\u2019s open-source codebase and curriculum. Learn math, programming, and computer science for free.',
-    stars: 453841, forks: 45944, size: 'md', avatar: '🎓', glow: 'rgba(99,102,241,0.20)' },
-  { rank: 5, name: 'free-programming-books', owner: 'EbookFoundation', lang: 'Python', color: '#3572A5',
-    desc: 'Freely available programming books, from beginner to advanced, across every language.',
-    stars: 394183, forks: 66645, size: 'lg', avatar: '📚', glow: 'rgba(34,197,94,0.18)' },
-  { rank: 6, name: 'openclaw', owner: 'openclaw', lang: 'TypeScript', color: '#3178c6',
-    desc: 'Your own personal AI assistant. Any OS. Any platform. The fastest-growing repo of 2026.',
-    stars: 385993, forks: 81122, size: 'lg', avatar: '🦞', glow: 'rgba(239,68,68,0.20)' },
-  { rank: 7, name: 'developer-roadmap', owner: 'kamranahmedse', lang: 'TypeScript', color: '#3178c6',
-    desc: 'Interactive roadmaps, guides and other educational content to help developers grow in their careers.',
-    stars: 364182, forks: 44765, size: 'lg', avatar: '🗺', glow: 'rgba(16,185,129,0.20)' },
-  { rank: 8, name: 'system-design-primer', owner: 'donnemartin', lang: 'Python', color: '#3572A5',
-    desc: 'Learn how to design large-scale systems. Prep for the system design interview.',
-    stars: 363256, forks: 57772, size: 'md', avatar: '🏗', glow: 'rgba(245,158,11,0.18)' },
-  { rank: 9, name: 'coding-interview-university', owner: 'jwasham', lang: '', color: '#1f6feb',
-    desc: 'A complete computer science study plan to become a software engineer.',
-    stars: 358414, forks: 84599, size: 'md', avatar: '💻', glow: 'rgba(14,165,233,0.18)' },
-  { rank: 10, name: 'awesome-python', owner: 'vinta', lang: 'Python', color: '#3572A5',
-    desc: 'An opinionated list of awesome Python frameworks, libraries, software and resources.',
-    stars: 313476, forks: 28510, size: 'md', avatar: '🐍', glow: 'rgba(34,197,94,0.20)' },
-  { rank: 11, name: 'react', owner: 'facebook', lang: 'JavaScript', color: '#f1e05a',
-    desc: 'The library for web and native user interfaces.',
-    stars: 247000, forks: 48000, size: 'md', avatar: '⚛️', glow: 'rgba(34,211,238,0.18)' },
-  { rank: 12, name: 'vue', owner: 'vuejs', lang: 'TypeScript', color: '#3178c6',
-    desc: 'The progressive JavaScript framework. Approachable, performant, versatile.',
-    stars: 210000, forks: 34000, size: 'md', avatar: '💚', glow: 'rgba(34,197,94,0.20)' },
-  { rank: 13, name: 'tensorflow', owner: 'tensorflow', lang: 'Python', color: '#3572A5',
-    desc: 'An end-to-end open source platform for machine learning.',
-    stars: 196000, forks: 80000, size: 'md', avatar: '🧠', glow: 'rgba(245,158,11,0.20)' },
-  { rank: 14, name: 'opencode', owner: 'anomalyco', lang: 'TypeScript', color: '#3178c6',
-    desc: 'The AI-powered coding agent that\u2019s eating the CLI. You are reading this with it right now.',
-    stars: 197300, forks: 12000, size: 'md', avatar: '⌨️', glow: 'rgba(139,92,246,0.24)' },
-  { rank: 15, name: 'ohmyzsh', owner: 'ohmyzsh', lang: 'Shell', color: '#89e051',
-    desc: 'A delightful community-driven framework for managing your zsh configuration.',
-    stars: 189000, forks: 26000, size: 'md', avatar: '🐚', glow: 'rgba(239,68,68,0.16)' },
-  { rank: 16, name: 'vscode', owner: 'microsoft', lang: 'TypeScript', color: '#3178c6',
-    desc: 'Visual Studio Code — the editor a million devs open every morning.',
-    stars: 188000, forks: 31000, size: 'md', avatar: '🧩', glow: 'rgba(34,211,238,0.18)' },
-  { rank: 17, name: 'yt-dlp', owner: 'yt-dlp', lang: 'Python', color: '#3572A5',
-    desc: 'Feature-rich command-line audio/video downloader with out-of-the-box support for thousands of sites.',
-    stars: 179000, forks: 14000, size: 'md', avatar: '⬇️', glow: 'rgba(239,68,68,0.20)' },
-  { rank: 18, name: 'ollama', owner: 'ollama', lang: 'Go', color: '#00ADD8',
-    desc: 'Get up and running with large language models locally. The on-device AI standard.',
-    stars: 177000, forks: 14000, size: 'md', avatar: '🦙', glow: 'rgba(251,191,36,0.20)' },
-  { rank: 19, name: 'bootstrap', owner: 'twbs', lang: 'JavaScript', color: '#f1e05a',
-    desc: 'The most popular HTML, CSS, and JavaScript framework for developing responsive, mobile-first projects.',
-    stars: 174000, forks: 79000, size: 'md', avatar: '🥾', glow: 'rgba(168,85,247,0.20)' },
-  { rank: 20, name: 'n8n', owner: 'n8n-io', lang: 'TypeScript', color: '#3178c6',
-    desc: 'Fair-code workflow automation. Combine visual building with custom code, self-host or cloud.',
-    stars: 197000, forks: 26000, size: 'lg', avatar: '🔀', glow: 'rgba(236,72,153,0.20)' },
-  { rank: 21, name: 'kubernetes', owner: 'kubernetes', lang: 'Go', color: '#00ADD8',
-    desc: 'Production-grade container orchestration. The control plane of the modern cloud.',
-    stars: 124000, forks: 43000, size: 'md', avatar: '☸️', glow: 'rgba(37,99,235,0.20)' },
-  { rank: 22, name: 'shadcn/ui', owner: 'shadcn-ui', lang: 'TypeScript', color: '#3178c6',
-    desc: 'Beautifully designed components that you can copy and paste into your apps. Radix UI + Tailwind.',
-    stars: 119000, forks: 8000, size: 'md', avatar: '🎨', glow: 'rgba(139,92,246,0.22)' },
-  { rank: 23, name: 'next.js', owner: 'vercel', lang: 'TypeScript', color: '#3178c6',
-    desc: 'The React framework for production-grade web applications, fullstack included.',
-    stars: 141000, forks: 26000, size: 'md', avatar: '▲', glow: 'rgba(255,255,255,0.14)' },
-  { rank: 24, name: 'transformers', owner: 'huggingface', lang: 'Python', color: '#3572A5',
-    desc: 'State-of-the-art Machine Learning for PyTorch, TensorFlow, and JAX.',
-    stars: 163000, forks: 32000, size: 'md', avatar: '🤗', glow: 'rgba(245,158,11,0.22)' },
-  { rank: 25, name: 'AutoGPT', owner: 'Significant-Gravitas', lang: 'Python', color: '#3572A5',
-    desc: 'AutoGPT is the vision of accessible AI for everyone, to use and to build on.',
-    stars: 186000, forks: 45000, size: 'lg', avatar: '🤖', glow: 'rgba(168,85,247,0.20)' }
-];
-
 const grid = document.getElementById('grid');
 
 const fmt = n => n >= 1000 ? (n / 1000).toFixed(1).replace(/\.0$/, '') + 'k' : String(n);
@@ -640,13 +563,48 @@ const avatarGradients = [
   'linear-gradient(135deg,#db2777,#7c3aed)',
   'linear-gradient(135deg,#d97706,#dc2626)',
   'linear-gradient(135deg,#2563eb,#06b6d4)',
-  'linear-gradient(135deg,#7c3aed,#db2777)'
+  'linear-gradient(135deg,#7c3aed,#db2777)',
+  'linear-gradient(135deg,#0d9488,#0ea5e9)',
+  'linear-gradient(135deg,#ea580c,#7c3aed)'
 ];
+
+const emojiPool = [
+  '🛠', '😎', '🔌', '🎓', '📚', '🦞', '🗺', '🏗', '💻', '🐍',
+  '🏠', '🙏', '🧪', '⚡', '⚛️', '🐧', '🕶', '🧩', '🧠', '🦜',
+  '💚', '🎓', '🔀', '🧠', '🧮', '🦀', '📈', '🐚', '⌨️', '🧰',
+  '🌍', '🤖', '📘', '📖', '🔥', '🪟', '🎬', '🏆', '✨', '🎯',
+  '🦙', '🗒', '🥾', '📄', '🌟', '🎨', '🧬', '🤗', '⌨️', '☕',
+  '🕷', '🧬', '⚙️', '📜', '🖥', '📱', '🤖', '📚', '🧑‍💻', '⚡',
+  '🐙', '🪄', '🐹', '📐', '👥', '📡', '🛰', '🌐', '📋', '🧭',
+  '💡', '✂️', '🖊', '📲', '☸️', '🚀', '🧾', '⚙️', '🎨', '🐈',
+  '🦀', '🖥', '⚙️', '📖', '🛡', '🦀', '🕹', '🧊', '🎈', '📊',
+  '🔐', '📝', '🌌', '🖼', '📸', '🌐'
+];
+
+const catMeta = {
+  all:       { label: 'All',         glow: 'rgba(255,255,255,0.14)' },
+  learning:  { label: 'Learning',    glow: 'rgba(34,197,94,0.22)' },
+  ai:        { label: 'AI',          glow: 'rgba(168,85,247,0.24)' },
+  framework: { label: 'Framework',   glow: 'rgba(34,211,238,0.22)' },
+  devtools:  { label: 'Dev tools',   glow: 'rgba(251,191,36,0.22)' },
+  curation:  { label: 'Curated lists', glow: 'rgba(99,102,241,0.22)' },
+  automation:{ label: 'Automation',  glow: 'rgba(236,72,153,0.20)' },
+  apis:      { label: 'APIs',        glow: 'rgba(14,165,233,0.20)' },
+  community: { label: 'Community',   glow: 'rgba(239,68,68,0.20)' },
+  os:        { label: 'OS',          glow: 'rgba(249,115,22,0.20)' },
+  lang:      { label: 'Languages',   glow: 'rgba(20,184,166,0.20)' },
+  security:  { label: 'Security & privacy', glow: 'rgba(225,29,72,0.20)' },
+  media:     { label: 'Media',       glow: 'rgba(217,70,239,0.18)' },
+  selfhost:  { label: 'Self-hosted', glow: 'rgba(16,185,129,0.20)' },
+  design:    { label: 'Design',      glow: 'rgba(244,114,182,0.18)' }
+};
 
 repos.forEach((r, i) => {
   const lang = r.lang
     ? `<span class="lang"><i style="background:${r.color}"></i>${r.lang}</span>`
     : '';
+  const avatar = r.avatar || emojiPool[i % emojiPool.length];
+  const glow = r.glow || (catMeta[r.cat] || {}).glow || 'rgba(139,92,246,0.16)';
   const extra = r.size === 'xl'
     ? `
       <div class="stat-line">
@@ -666,12 +624,12 @@ repos.forEach((r, i) => {
   card.href = `https://github.com/${r.owner}/${r.name}`;
   card.target = '_blank';
   card.rel = 'noopener';
-  card.style.setProperty('--glow', r.glow);
-  card.style.animationDelay = (i * 40) + 'ms';
+  card.style.setProperty('--glow', glow);
+  card.style.animationDelay = ((i % 30) * 30) + 'ms';
   card.innerHTML = `
     <span class="rank-badge">#${String(r.rank).padStart(2, '0')}</span>
     <div class="top">
-      <div class="avatar" style="background:${avatarGradients[i % avatarGradients.length]}">${r.avatar}</div>
+      <div class="avatar" style="background:${avatarGradients[i % avatarGradients.length]}">${avatar}</div>
       <div class="meta">
         <h3>${r.name}</h3>
         <div class="owner">${r.owner}</div>
@@ -691,17 +649,6 @@ const totalForks = repos.reduce((a, r) => a + r.forks, 0);
 document.getElementById('statStars').textContent = fmt(totalStars);
 document.getElementById('statForks').textContent = fmt(totalForks);
 document.getElementById('statRepos').textContent = repos.length;
-
-const catMeta = {
-  all:       { label: 'All',     glow: 'rgba(255,255,255,0.14)' },
-  learning:  { label: 'Learning', glow: 'rgba(34,197,94,0.22)' },
-  ai:        { label: 'AI',      glow: 'rgba(168,85,247,0.24)' },
-  framework: { label: 'Framework', glow: 'rgba(34,211,238,0.22)' },
-  devtools:  { label: 'Dev tools', glow: 'rgba(251,191,36,0.22)' },
-  curation:  { label: 'Curated lists', glow: 'rgba(99,102,241,0.22)' },
-  automation:{ label: 'Automation', glow: 'rgba(236,72,153,0.20)' },
-  apis:      { label: 'APIs',    glow: 'rgba(14,165,233,0.20)' }
-};
 
 const cards = repos.map((r, i) => {
   const el = grid.children[i];
