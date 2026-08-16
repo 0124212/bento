@@ -579,16 +579,25 @@
   .c-lg { grid-column: span 4; }
   .c-md { grid-column: span 3; }
   .c-sm { grid-column: span 2; }
+  .c-tall { grid-column: span 4; grid-row: span 2; }
+  .c-sq { grid-column: span 2; grid-row: span 2; }
+  .c-tall .avatar { width: 54px; height: 54px; font-size: 1.4rem; border-radius: 16px; }
+  .c-tall h3 { font-size: 1.25rem; }
+  .c-tall p { -webkit-line-clamp: 5; }
+  .c-sq .avatar { width: 42px; height: 42px; font-size: 1.1rem; border-radius: 12px; }
 
   @media (max-width: 1024px) {
     .c-xl { grid-column: span 12; }
     .c-lg { grid-column: span 6; }
     .c-md { grid-column: span 6; }
     .c-sm { grid-column: span 4; }
+    .c-tall { grid-column: span 6; grid-row: span 2; }
+    .c-sq { grid-column: span 4; grid-row: span 2; }
   }
 
   @media (max-width: 640px) {
-    .c-xl, .c-lg, .c-md, .c-sm { grid-column: span 12; }
+    .c-xl, .c-lg, .c-md, .c-sm, .c-tall, .c-sq { grid-column: span 12; }
+    .c-tall, .c-sq { grid-row: auto; }
     header { padding: 40px 0 24px; }
   }
 
@@ -1008,6 +1017,25 @@ if (track) {
   track.innerHTML = mItems + mItems;
 }
 
+function hashStr(s) {
+  let h = 2166136261;
+  for (let i = 0; i < s.length; i++) {
+    h ^= s.charCodeAt(i);
+    h = Math.imul(h, 16777619);
+  }
+  return h >>> 0;
+}
+
+function pickSize(r) {
+  if (r.size === 'xl') return 'xl';
+  const m = hashStr(r.owner + '/' + r.name) % 100;
+  if (m < 8) return 'tall';
+  if (m < 18) return 'sq';
+  if (m < 32) return 'lg';
+  if (m < 62) return 'md';
+  return 'sm';
+}
+
 repos.forEach((r, i) => {
   const lang = r.lang
     ? `<span class="lang"><i style="background:${r.color}"></i>${r.lang}</span>`
@@ -1029,7 +1057,7 @@ repos.forEach((r, i) => {
       </div>`;
 
   const card = document.createElement('a');
-  card.className = `card c-${r.size}`;
+  card.className = `card c-${pickSize(r)}`;
   card.href = `https://github.com/${r.owner}/${r.name}`;
   card.target = '_blank';
   card.rel = 'noopener';
