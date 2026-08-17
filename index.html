@@ -17,7 +17,7 @@
     --border-strong: #ccc8bd;
     --text: #1a1a1f;
     --muted: #6e6b62;
-    --accent: #6c47ff;
+    --accent: #7dd3fc;
     --accent2: #ff6b6b;
     --accent3: #00c9a7;
     --radius: 18px;
@@ -34,7 +34,7 @@
     --border-strong: #3a3a44;
     --text: #eae8e1;
     --muted: #807d74;
-    --accent: #a48bff;
+    --accent: #38bdf8;
     --accent2: #ff8585;
     --accent3: #3dd9b8;
   }
@@ -740,7 +740,7 @@
     --border-strong: #2a2a5a;
     --text: #c8c6ff;
     --muted: #5a5880;
-    --accent: #7b5cff;
+    --accent: #60a5fa;
     --accent2: #ff6b9d;
     --accent3: #00e5c0;
   }
@@ -1351,7 +1351,7 @@ document.addEventListener('keydown', e => {
   } else { konamiIdx = 0; }
 });
 function spawnConfetti() {
-  const cols = ['#6c47ff','#ff6b6b','#00c9a7','#ffd93d','#ff85ff','#4ecdc4','#ff6600','#cc0000','#00aa00','#39c5bb','#e94196'];
+  const cols = ['#7dd3fc','#ff6b6b','#00c9a7','#ffd93d','#ff85ff','#4ecdc4','#ff6600','#cc0000','#00aa00','#39c5bb','#e94196'];
   for (let i=0;i<80;i++) {
     const el = document.createElement('div'); el.className='confetti-piece';
     el.style.left = Math.random()*100+'vw'; el.style.background = cols[i%cols.length];
@@ -1376,7 +1376,7 @@ logo.addEventListener('click', () => {
 // ══════════════════════════════════════
 // 3. CURSOR TRAIL
 // ══════════════════════════════════════
-const trailColors=['#6c47ff','#ff6b6b','#00c9a7','#ffd93d'], trailDots=[];
+const trailColors=['#7dd3fc','#ff6b6b','#00c9a7','#ffd93d'], trailDots=[];
 for(let i=0;i<6;i++){const d=document.createElement('div');d.className='trail-dot';d.style.background=trailColors[i%trailColors.length];d.style.opacity='0';d.style.width=(8-i)+'px';d.style.height=(8-i)+'px';document.body.appendChild(d);trailDots.push({el:d,x:0,y:0});}
 let mouseX=0,mouseY=0;
 document.addEventListener('mousemove',e=>{mouseX=e.clientX;mouseY=e.clientY;trailDots.forEach(d=>d.el.style.opacity='0.5');});
@@ -1388,7 +1388,7 @@ animateTrail();
 // ══════════════════════════════════════
 document.addEventListener('click', e => {
   sfxClick();
-  const cols=['#6c47ff','#ff6b6b','#00c9a7','#ffd93d'];
+  const cols=['#7dd3fc','#ff6b6b','#00c9a7','#ffd93d'];
   for(let i=0;i<8;i++){const p=document.createElement('div');p.className='click-particle';p.style.left=e.clientX+'px';p.style.top=e.clientY+'px';p.style.background=cols[i%cols.length];const a=(i/8)*Math.PI*2,d=30+Math.random()*40,tx=Math.cos(a)*d,ty=Math.sin(a)*d;p.style.animation='none';document.body.appendChild(p);requestAnimationFrame(()=>{p.style.transition='all 0.4s ease-out';p.style.transform=`translate(${tx}px,${ty}px) scale(0)`;p.style.opacity='0';});setTimeout(()=>p.remove(),500);}
 });
 
@@ -1448,11 +1448,11 @@ const commands={
   ghost:()=>{document.querySelectorAll('.b').forEach(c=>{c.style.transition='opacity 0.5s';c.style.opacity='0.1';});setTimeout(()=>{document.querySelectorAll('.b').forEach(c=>{c.style.opacity='';});},3000);showToast('👻 boo!');markEgg('ghost');},
   flash:()=>{document.body.style.transition='background 0.1s';document.body.style.background='#fff';setTimeout(()=>{document.body.style.background='';},100);showToast('⚡ flash!');markEgg('flash');},
   ascii:()=>{showToast('check the console');markEgg('ascii');
-    console.log('%c ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄ ', 'color:#6c47ff;font-size:10px;');
+    console.log('%c ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄ ', 'color:#7dd3fc;font-size:10px;');
     console.log('%c █ 12.LOG — THE FULL EXPERIENCE █ ', 'color:#ff6b6b;font-size:10px;');
     console.log('%c █ musician · producer · builder  █ ', 'color:#00c9a7;font-size:10px;');
     console.log('%c █ los angeles, ca                █ ', 'color:#ffd93d;font-size:10px;');
-    console.log('%c ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀ ', 'color:#6c47ff;font-size:10px;');},
+    console.log('%c ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀ ', 'color:#7dd3fc;font-size:10px;');},
   credits:()=>{showToast('built with love and zero frameworks');markEgg('credits');},
   12:()=>{showToast('that\'s me!');sfxDing();markEgg('12');},
   about:()=>{document.querySelector('.b:last-child').scrollIntoView({behavior:'smooth'});showToast('scrolling to about');},
@@ -1820,13 +1820,13 @@ function generatePixelArt() {
 // 28. CONSOLE (mega version)
 // ══════════════════════════════════════
 console.log('%c ', 'font-size:40px');
-console.log('%c ███╗   ██╗███████╗████████╗', 'color:#6c47ff;font-size:14px;font-family:monospace;');
+console.log('%c ███╗   ██╗███████╗████████╗', 'color:#7dd3fc;font-size:14px;font-family:monospace;');
 console.log('%c ████╗  ██║██╔════╝╚══██╔══╝', 'color:#ff6b6b;font-size:14px;font-family:monospace;');
 console.log('%c ██╔██╗ ██║█████╗     ██║', 'color:#00c9a7;font-size:14px;font-family:monospace;');
 console.log('%c ██║╚██╗██║██╔══╝     ██║', 'color:#ffd93d;font-size:14px;font-family:monospace;');
 console.log('%c ██║ ╚████║███████╗   ██║', 'color:#ff85ff;font-size:14px;font-family:monospace;');
 console.log('%c ╚═╝  ╚═══╝╚══════╝   ╚═╝', 'color:#4ecdc4;font-size:14px;font-family:monospace;');
-console.log('%c .log', 'color:#6c47ff;font-size:14px;font-family:monospace;');
+console.log('%c .log', 'color:#7dd3fc;font-size:14px;font-family:monospace;');
 console.log('%c ─────────────────────────────', 'color:#6e6b62;font-size:10px;');
 console.log('%c musician · producer · builder', 'color:#6e6b62;font-size:12px;');
 console.log('%c los angeles, ca', 'color:#6e6b62;font-size:11px;');
