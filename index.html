@@ -1596,11 +1596,15 @@ function showHint(msg) {
 // ══════════════════════════════════════
 // LOADER
 // ══════════════════════════════════════
-window.addEventListener('load', () => {
-  setTimeout(() => {
-    document.getElementById('loader').classList.add('hidden');
-  }, 600);
-});
+(function(){
+  const loader = document.getElementById('loader');
+  if (!loader) return;
+  const hide = () => loader.classList.add('hidden');
+  if (document.readyState === 'complete') { setTimeout(hide, 400); }
+  else { window.addEventListener('load', () => setTimeout(hide, 400)); }
+  // fallback: always hide after 2s no matter what
+  setTimeout(hide, 2000);
+})();
 
 // ══════════════════════════════════════
 // THEME
