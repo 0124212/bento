@@ -437,6 +437,88 @@
   ::-webkit-scrollbar { width: 8px; }
   ::-webkit-scrollbar-track { background: var(--bg); }
   ::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 4px; }
+
+  /* ── easter eggs ── */
+
+  /* cursor trail */
+  .trail-dot {
+    position: fixed;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9999;
+    transition: opacity 0.3s;
+  }
+
+  /* confetti */
+  .confetti-piece {
+    position: fixed;
+    width: 10px;
+    height: 10px;
+    top: -10px;
+    z-index: 9999;
+    pointer-events: none;
+    animation: confettiFall 2.5s ease-in forwards;
+  }
+  @keyframes confettiFall {
+    0% { transform: translateY(0) rotate(0deg) scale(1); opacity: 1; }
+    100% { transform: translateY(100vh) rotate(720deg) scale(0.3); opacity: 0; }
+  }
+
+  /* glitch */
+  .glitch {
+    animation: glitch 0.3s ease;
+  }
+  @keyframes glitch {
+    0% { transform: translate(0); filter: hue-rotate(0deg); }
+    20% { transform: translate(-3px, 2px); filter: hue-rotate(90deg); }
+    40% { transform: translate(3px, -2px); filter: hue-rotate(180deg); }
+    60% { transform: translate(-2px, -3px); filter: hue-rotate(270deg); }
+    80% { transform: translate(2px, 3px); filter: hue-rotate(360deg); }
+    100% { transform: translate(0); filter: hue-rotate(0deg); }
+  }
+
+  /* card tilt */
+  .b.tilt {
+    transition: transform 0.1s ease, border-color 0.25s ease, background 0.25s ease;
+  }
+  .b.tilt:hover {
+    transform: none;
+  }
+
+  /* secret section */
+  #secretSection {
+    display: none;
+    grid-column: span 12;
+    background: var(--card);
+    border: 2px dashed var(--accent);
+    border-radius: var(--radius);
+    padding: 32px;
+    text-align: center;
+    animation: fadeUp 0.5s ease;
+  }
+  #secretSection.show { display: block; }
+  #secretSection h2 {
+    font-family: var(--sans);
+    font-size: 1.6rem;
+    font-weight: 700;
+    margin-bottom: 12px;
+  }
+  #secretSection p {
+    font-family: var(--mono);
+    font-size: 0.8rem;
+    color: var(--muted);
+    line-height: 1.8;
+  }
+  #secretSection .secret-ascii {
+    font-family: var(--mono);
+    font-size: 0.55rem;
+    line-height: 1.2;
+    color: var(--accent);
+    margin-top: 16px;
+    white-space: pre;
+  }
 </style>
 </head>
 <body>
@@ -621,6 +703,23 @@
         <span class="hl">→</span> musician · producer · builder
       </div>
     </div>
+
+    <!-- SECRET -->
+    <div id="secretSection">
+      <h2>you found it</h2>
+      <p>
+        this page has no tracking, no analytics, no cookies.<br />
+        just html, css, and a little js — like the web used to be.<br /><br />
+        you pressed ↑↑↓↓←→←→BA or went to <code style="color:var(--accent)">#secret</code> — either way, you're curious.<br />
+        that's the best kind of visitor.
+      </p>
+      <div class="secret-ascii">
+    ╔══════════════════════════════════╗
+    ║  12.log  ·  los angeles, ca     ║
+    ║  built with memos + cloudflare  ║
+    ╚══════════════════════════════════╝
+      </div>
+    </div>
   </div>
 
   <footer>
@@ -629,7 +728,7 @@
 </div>
 
 <script>
-// theme
+// ── theme ──
 (function() {
   const root = document.documentElement;
   const saved = localStorage.getItem('theme');
@@ -644,7 +743,7 @@ document.getElementById('themeToggle').addEventListener('click', () => {
   localStorage.setItem('theme', next);
 });
 
-// clocks
+// ── clocks ──
 function tickClocks() {
   document.querySelectorAll('.tz-time').forEach(el => {
     el.textContent = new Intl.DateTimeFormat('en-US', {
@@ -658,10 +757,150 @@ function tickClocks() {
 tickClocks();
 setInterval(tickClocks, 10000);
 
-// stagger animations
+// ── stagger animations ──
 document.querySelectorAll('.b').forEach((el, i) => {
   el.style.animationDelay = (i * 50) + 'ms';
 });
+
+// ══════════════════════════════════════
+// EASTER EGGS
+// ══════════════════════════════════════
+
+// ── 1. Konami Code → confetti ──
+const konami = [38,38,40,40,37,39,37,39,66,65];
+let konamiIdx = 0;
+document.addEventListener('keydown', e => {
+  if (e.keyCode === konami[konamiIdx]) {
+    konamiIdx++;
+    if (konamiIdx === konami.length) {
+      konamiIdx = 0;
+      spawnConfetti();
+      document.getElementById('secretSection').classList.add('show');
+      document.getElementById('secretSection').scrollIntoView({ behavior: 'smooth' });
+    }
+  } else {
+    konamiIdx = 0;
+  }
+});
+
+function spawnConfetti() {
+  const colors = ['#6c47ff','#ff6b6b','#00c9a7','#ffd93d','#ff85ff','#4ecdc4'];
+  for (let i = 0; i < 80; i++) {
+    const el = document.createElement('div');
+    el.className = 'confetti-piece';
+    el.style.left = Math.random() * 100 + 'vw';
+    el.style.background = colors[Math.floor(Math.random() * colors.length)];
+    el.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
+    el.style.width = (Math.random() * 8 + 6) + 'px';
+    el.style.height = (Math.random() * 8 + 6) + 'px';
+    el.style.animationDuration = (Math.random() * 1.5 + 1.5) + 's';
+    el.style.animationDelay = (Math.random() * 0.5) + 's';
+    document.body.appendChild(el);
+    setTimeout(() => el.remove(), 4000);
+  }
+}
+
+// ── 2. Logo click counter → glitch at 10 ──
+let logoClicks = 0;
+const logo = document.querySelector('.logo');
+logo.style.cursor = 'pointer';
+logo.addEventListener('click', () => {
+  logoClicks++;
+  if (logoClicks === 10) {
+    logo.classList.add('glitch');
+    logo.style.color = 'var(--accent2)';
+    setTimeout(() => {
+      logo.classList.remove('glitch');
+      logo.style.color = '';
+    }, 600);
+    logoClicks = 0;
+  }
+});
+
+// ── 3. Cursor trail ──
+const trailColors = ['#6c47ff','#ff6b6b','#00c9a7','#ffd93d'];
+const trailDots = [];
+for (let i = 0; i < 6; i++) {
+  const dot = document.createElement('div');
+  dot.className = 'trail-dot';
+  dot.style.background = trailColors[i % trailColors.length];
+  dot.style.opacity = '0';
+  dot.style.width = (8 - i) + 'px';
+  dot.style.height = (8 - i) + 'px';
+  document.body.appendChild(dot);
+  trailDots.push({ el: dot, x: 0, y: 0 });
+}
+
+let mouseX = 0, mouseY = 0;
+document.addEventListener('mousemove', e => {
+  mouseX = e.clientX;
+  mouseY = e.clientY;
+  trailDots.forEach(d => d.el.style.opacity = '0.5');
+});
+
+function animateTrail() {
+  let prevX = mouseX, prevY = mouseY;
+  trailDots.forEach((d, i) => {
+    d.x += (prevX - d.x) * (0.35 - i * 0.03);
+    d.y += (prevY - d.y) * (0.35 - i * 0.03);
+    d.el.style.left = d.x + 'px';
+    d.el.style.top = d.y + 'px';
+    prevX = d.x;
+    prevY = d.y;
+  });
+  requestAnimationFrame(animateTrail);
+}
+animateTrail();
+
+// ── 4. Console ASCII art ──
+console.log('%c 12.log ', 'background:#6c47ff;color:#fff;font-size:20px;padding:8px 16px;border-radius:6px;font-weight:bold;');
+console.log('%c musician · producer · builder ', 'color:#6e6b62;font-size:12px;');
+console.log('%c you found the console easter egg 🥚 ', 'color:#00c9a7;font-size:11px;');
+console.log(`
+╔══════════════════════════════╗
+║   ██╗  ██╗                  ║
+║   ╚██╗██╔╝                  ║
+║    ╚███╔╝  █████╗ ████████║ ║
+║    ██╔██╗ ██╔══██╗╚══██╔═╝ ║
+║   ██╔╝ ██╗╚█████╔╝   ██║   ║
+║   ╚═╝  ╚═╝ ╚════╝    ╚═╝   ║
+║   1 2 . l o g               ║
+╚══════════════════════════════╝
+`);
+
+// ── 5. Card 3D tilt on hover ──
+document.querySelectorAll('.b').forEach(card => {
+  card.classList.add('tilt');
+  card.addEventListener('mousemove', e => {
+    const rect = card.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    const centerX = rect.width / 2;
+    const centerY = rect.height / 2;
+    const rotateX = ((y - centerY) / centerY) * -4;
+    const rotateY = ((x - centerX) / centerX) * 4;
+    card.style.transform = `perspective(600px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-3px)`;
+  });
+  card.addEventListener('mouseleave', () => {
+    card.style.transform = '';
+  });
+});
+
+// ── 6. #secret hash → show secret section ──
+function checkSecret() {
+  if (window.location.hash === '#secret') {
+    document.getElementById('secretSection').classList.add('show');
+    setTimeout(() => {
+      document.getElementById('secretSection').scrollIntoView({ behavior: 'smooth' });
+    }, 100);
+  }
+}
+checkSecret();
+window.addEventListener('hashchange', checkSecret);
+
+// ── console greeting ──
+console.log('%c↑↑↓↓←→←→BA ', 'color:#ff6b6b;font-size:14px;font-weight:bold;');
+console.log('%ctrigger the konami code for a surprise ', 'color:#6e6b62;font-size:11px;');
 </script>
 </body>
 </html>
