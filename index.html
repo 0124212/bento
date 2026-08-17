@@ -519,9 +519,94 @@
     margin-top: 16px;
     white-space: pre;
   }
+
+  /* click burst */
+  .click-particle {
+    position: fixed;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9998;
+    animation: burstOut 0.5s ease-out forwards;
+  }
+  @keyframes burstOut {
+    0% { transform: translate(0,0) scale(1); opacity: 1; }
+    100% { opacity: 0; }
+  }
+
+  /* matrix canvas */
+  #matrixCanvas {
+    position: fixed;
+    inset: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 9990;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.5s;
+  }
+  #matrixCanvas.active {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  /* command toast */
+  .cmd-toast {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    color: #fff;
+    background: var(--accent);
+    padding: 10px 20px;
+    border-radius: 10px;
+    z-index: 10000;
+    opacity: 0;
+    transition: all 0.3s ease;
+    pointer-events: none;
+  }
+  .cmd-toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+
+  /* neon theme */
+  :root[data-theme="neon"] {
+    --bg: #0a0012;
+    --bg-soft: #0f001a;
+    --card: #12001f;
+    --card-hover: #1a002e;
+    --border: #ff00ff33;
+    --border-strong: #ff00ff66;
+    --text: #fff;
+    --muted: #c77dff;
+    --accent: #ff00ff;
+    --accent2: #00ffff;
+    --accent3: #39ff14;
+  }
+
+  /* vaporwave theme */
+  :root[data-theme="vaporwave"] {
+    --bg: #1a0a2e;
+    --bg-soft: #220e3a;
+    --card: #2a1245;
+    --card-hover: #361860;
+    --border: #ff71ce55;
+    --border-strong: #ff71ceaa;
+    --text: #ff71ce;
+    --muted: #01cdfe;
+    --accent: #ff71ce;
+    --accent2: #01cdfe;
+    --accent3: #05ffa1;
+  }
 </style>
 </head>
 <body>
+<canvas id="matrixCanvas"></canvas>
+<div class="cmd-toast" id="cmdToast"></div>
 <div class="wrap">
   <nav>
     <div class="logo">12<span class="dot">.</span>log</div>
@@ -728,52 +813,88 @@
 </div>
 
 <script>
-// ── theme ──
+// ══════════════════════════════════════
+// AUDIO CONTEXT (lazy — only on first interaction)
+// ══════════════════════════════════════
+let audioCtx = null;
+function getAudio() {
+  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  return audioCtx;
+}
+
+function playTone(freq, dur, type, vol) {
+  try {
+    const ctx = getAudio();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = type || 'sine';
+    osc.frequency.value = freq;
+    gain.gain.value = vol || 0.08;
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + dur);
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.start();
+    osc.stop(ctx.currentTime + dur);
+  } catch(e) {}
+}
+
+function sfxClick() { playTone(800, 0.06, 'sine', 0.05); }
+function sfxKey() { playTone(400 + Math.random() * 200, 0.03, 'square', 0.02); }
+function sfxDing() { playTone(880, 0.15, 'sine', 0.1); setTimeout(() => playTone(1100, 0.2, 'sine', 0.1), 100); }
+function sfxGlitch() { playTone(150, 0.1, 'sawtooth', 0.06); playTone(90, 0.15, 'square', 0.04); }
+
+// ══════════════════════════════════════
+// THEME
+// ══════════════════════════════════════
+let currentTheme = 'light';
 (function() {
   const root = document.documentElement;
   const saved = localStorage.getItem('theme');
-  if (saved === 'dark') root.dataset.theme = 'dark';
-  else if (!saved && window.matchMedia('(prefers-color-scheme: dark)').matches) root.dataset.theme = 'dark';
+  if (saved) { root.dataset.theme = saved; currentTheme = saved; }
+  else if (window.matchMedia('(prefers-color-scheme: dark)').matches) { root.dataset.theme = 'dark'; currentTheme = 'dark'; }
 })();
 
 document.getElementById('themeToggle').addEventListener('click', () => {
   const root = document.documentElement;
   const next = root.dataset.theme === 'dark' ? 'light' : 'dark';
   root.dataset.theme = next;
+  currentTheme = next;
   localStorage.setItem('theme', next);
+  sfxClick();
 });
 
-// ── clocks ──
+// ══════════════════════════════════════
+// CLOCKS
+// ══════════════════════════════════════
 function tickClocks() {
   document.querySelectorAll('.tz-time').forEach(el => {
     el.textContent = new Intl.DateTimeFormat('en-US', {
-      timeZone: el.dataset.tz,
-      hour: '2-digit',
-      minute: '2-digit',
-      hour12: false
+      timeZone: el.dataset.tz, hour: '2-digit', minute: '2-digit', hour12: false
     }).format(new Date());
   });
 }
 tickClocks();
 setInterval(tickClocks, 10000);
 
-// ── stagger animations ──
+// ══════════════════════════════════════
+// STAGGER
+// ══════════════════════════════════════
 document.querySelectorAll('.b').forEach((el, i) => {
   el.style.animationDelay = (i * 50) + 'ms';
 });
 
 // ══════════════════════════════════════
-// EASTER EGGS
+// 1. KONAMI CODE → confetti + sound
 // ══════════════════════════════════════
-
-// ── 1. Konami Code → confetti ──
 const konami = [38,38,40,40,37,39,37,39,66,65];
 let konamiIdx = 0;
 document.addEventListener('keydown', e => {
+  sfxKey();
   if (e.keyCode === konami[konamiIdx]) {
     konamiIdx++;
     if (konamiIdx === konami.length) {
       konamiIdx = 0;
+      sfxDing();
       spawnConfetti();
       document.getElementById('secretSection').classList.add('show');
       document.getElementById('secretSection').scrollIntoView({ behavior: 'smooth' });
@@ -789,7 +910,7 @@ function spawnConfetti() {
     const el = document.createElement('div');
     el.className = 'confetti-piece';
     el.style.left = Math.random() * 100 + 'vw';
-    el.style.background = colors[Math.floor(Math.random() * colors.length)];
+    el.style.background = colors[i % colors.length];
     el.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
     el.style.width = (Math.random() * 8 + 6) + 'px';
     el.style.height = (Math.random() * 8 + 6) + 'px';
@@ -800,24 +921,27 @@ function spawnConfetti() {
   }
 }
 
-// ── 2. Logo click counter → glitch at 10 ──
+// ══════════════════════════════════════
+// 2. LOGO GLITCH at 10 clicks
+// ══════════════════════════════════════
 let logoClicks = 0;
 const logo = document.querySelector('.logo');
 logo.style.cursor = 'pointer';
 logo.addEventListener('click', () => {
+  sfxClick();
   logoClicks++;
   if (logoClicks === 10) {
+    sfxGlitch();
     logo.classList.add('glitch');
     logo.style.color = 'var(--accent2)';
-    setTimeout(() => {
-      logo.classList.remove('glitch');
-      logo.style.color = '';
-    }, 600);
+    setTimeout(() => { logo.classList.remove('glitch'); logo.style.color = ''; }, 600);
     logoClicks = 0;
   }
 });
 
-// ── 3. Cursor trail ──
+// ══════════════════════════════════════
+// 3. CURSOR TRAIL
+// ══════════════════════════════════════
 const trailColors = ['#6c47ff','#ff6b6b','#00c9a7','#ffd93d'];
 const trailDots = [];
 for (let i = 0; i < 6; i++) {
@@ -830,77 +954,181 @@ for (let i = 0; i < 6; i++) {
   document.body.appendChild(dot);
   trailDots.push({ el: dot, x: 0, y: 0 });
 }
-
 let mouseX = 0, mouseY = 0;
-document.addEventListener('mousemove', e => {
-  mouseX = e.clientX;
-  mouseY = e.clientY;
-  trailDots.forEach(d => d.el.style.opacity = '0.5');
-});
-
+document.addEventListener('mousemove', e => { mouseX = e.clientX; mouseY = e.clientY; trailDots.forEach(d => d.el.style.opacity = '0.5'); });
 function animateTrail() {
-  let prevX = mouseX, prevY = mouseY;
+  let px = mouseX, py = mouseY;
   trailDots.forEach((d, i) => {
-    d.x += (prevX - d.x) * (0.35 - i * 0.03);
-    d.y += (prevY - d.y) * (0.35 - i * 0.03);
+    d.x += (px - d.x) * (0.35 - i * 0.03);
+    d.y += (py - d.y) * (0.35 - i * 0.03);
     d.el.style.left = d.x + 'px';
     d.el.style.top = d.y + 'px';
-    prevX = d.x;
-    prevY = d.y;
+    px = d.x; py = d.y;
   });
   requestAnimationFrame(animateTrail);
 }
 animateTrail();
 
-// ── 4. Console ASCII art ──
-console.log('%c 12.log ', 'background:#6c47ff;color:#fff;font-size:20px;padding:8px 16px;border-radius:6px;font-weight:bold;');
-console.log('%c musician · producer · builder ', 'color:#6e6b62;font-size:12px;');
-console.log('%c you found the console easter egg 🥚 ', 'color:#00c9a7;font-size:11px;');
-console.log(`
-╔══════════════════════════════╗
-║   ██╗  ██╗                  ║
-║   ╚██╗██╔╝                  ║
-║    ╚███╔╝  █████╗ ████████║ ║
-║    ██╔██╗ ██╔══██╗╚══██╔═╝ ║
-║   ██╔╝ ██╗╚█████╔╝   ██║   ║
-║   ╚═╝  ╚═╝ ╚════╝    ╚═╝   ║
-║   1 2 . l o g               ║
-╚══════════════════════════════╝
-`);
+// ══════════════════════════════════════
+// 4. CLICK PARTICLE BURST
+// ══════════════════════════════════════
+document.addEventListener('click', e => {
+  sfxClick();
+  const colors = ['#6c47ff','#ff6b6b','#00c9a7','#ffd93d'];
+  for (let i = 0; i < 8; i++) {
+    const p = document.createElement('div');
+    p.className = 'click-particle';
+    p.style.left = e.clientX + 'px';
+    p.style.top = e.clientY + 'px';
+    p.style.background = colors[i % colors.length];
+    const angle = (i / 8) * Math.PI * 2;
+    const dist = 30 + Math.random() * 40;
+    const tx = Math.cos(angle) * dist;
+    const ty = Math.sin(angle) * dist;
+    p.style.setProperty('--tx', tx + 'px');
+    p.style.setProperty('--ty', ty + 'px');
+    p.style.animation = 'none';
+    document.body.appendChild(p);
+    requestAnimationFrame(() => {
+      p.style.transition = 'all 0.4s ease-out';
+      p.style.transform = `translate(${tx}px, ${ty}px) scale(0)`;
+      p.style.opacity = '0';
+    });
+    setTimeout(() => p.remove(), 500);
+  }
+});
 
-// ── 5. Card 3D tilt on hover ──
+// ══════════════════════════════════════
+// 5. MATRIX RAIN
+// ══════════════════════════════════════
+const matrixCanvas = document.getElementById('matrixCanvas');
+const mCtx = matrixCanvas.getContext('2d');
+let matrixActive = false;
+let matrixAnimId = null;
+
+function resizeMatrix() {
+  matrixCanvas.width = window.innerWidth;
+  matrixCanvas.height = window.innerHeight;
+}
+resizeMatrix();
+window.addEventListener('resize', resizeMatrix);
+
+const matrixChars = 'アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン0123456789ABCDEF';
+let matrixDrops = [];
+
+function startMatrix() {
+  if (matrixActive) return;
+  matrixActive = true;
+  matrixCanvas.classList.add('active');
+  const cols = Math.floor(matrixCanvas.width / 14);
+  matrixDrops = Array(cols).fill(1);
+  drawMatrix();
+}
+
+function drawMatrix() {
+  if (!matrixActive) return;
+  mCtx.fillStyle = 'rgba(0,0,0,0.05)';
+  mCtx.fillRect(0, 0, matrixCanvas.width, matrixCanvas.height);
+  mCtx.fillStyle = '#0f0';
+  mCtx.font = '14px monospace';
+  for (let i = 0; i < matrixDrops.length; i++) {
+    const ch = matrixChars[Math.floor(Math.random() * matrixChars.length)];
+    mCtx.fillText(ch, i * 14, matrixDrops[i] * 14);
+    if (matrixDrops[i] * 14 > matrixCanvas.height && Math.random() > 0.975) matrixDrops[i] = 0;
+    matrixDrops[i]++;
+  }
+  matrixAnimId = setTimeout(drawMatrix, 33);
+}
+
+function stopMatrix() {
+  matrixActive = false;
+  matrixCanvas.classList.remove('active');
+  if (matrixAnimId) clearTimeout(matrixAnimId);
+  mCtx.clearRect(0, 0, matrixCanvas.width, matrixCanvas.height);
+}
+
+// ══════════════════════════════════════
+// 6. CARD 3D TILT
+// ══════════════════════════════════════
 document.querySelectorAll('.b').forEach(card => {
   card.classList.add('tilt');
   card.addEventListener('mousemove', e => {
-    const rect = card.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-    const centerX = rect.width / 2;
-    const centerY = rect.height / 2;
-    const rotateX = ((y - centerY) / centerY) * -4;
-    const rotateY = ((x - centerX) / centerX) * 4;
-    card.style.transform = `perspective(600px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-3px)`;
+    const r = card.getBoundingClientRect();
+    const rx = ((e.clientY - r.top) / r.height - 0.5) * -6;
+    const ry = ((e.clientX - r.left) / r.width - 0.5) * 6;
+    card.style.transform = `perspective(600px) rotateX(${rx}deg) rotateY(${ry}deg) translateY(-3px)`;
   });
-  card.addEventListener('mouseleave', () => {
-    card.style.transform = '';
-  });
+  card.addEventListener('mouseleave', () => { card.style.transform = ''; });
 });
 
-// ── 6. #secret hash → show secret section ──
+// ══════════════════════════════════════
+// 7. HIDDEN COMMANDS
+// ══════════════════════════════════════
+let cmdBuffer = '';
+const CMD_TIMEOUT = 1500;
+let cmdTimer = null;
+
+const commands = {
+  matrix: () => { if (matrixActive) stopMatrix(); else startMatrix(); showToast('matrix mode ' + (matrixActive ? 'ON' : 'OFF')); },
+  neon: () => { switchTheme('neon'); showToast('neon mode activated'); },
+  vaporwave: () => { switchTheme('vaporwave'); showToast('vaporwave activated'); },
+  vapor: () => { switchTheme('vaporwave'); showToast('vaporwave activated'); },
+  dark: () => { switchTheme('dark'); showToast('dark mode'); },
+  light: () => { switchTheme('light'); showToast('light mode'); },
+  reset: () => { switchTheme('light'); if (matrixActive) stopMatrix(); showToast('reset to default'); },
+  help: () => { showToast('try: matrix, neon, vaporwave, dark, light, reset'); },
+  whoami: () => { showToast('you are a curious one'); },
+  hello: () => { showToast('hey :)'); sfxDing(); },
+  secret: () => { document.getElementById('secretSection').classList.add('show'); document.getElementById('secretSection').scrollIntoView({ behavior: 'smooth' }); showToast('secret revealed'); },
+};
+
+function switchTheme(t) {
+  document.documentElement.dataset.theme = t;
+  currentTheme = t;
+  localStorage.setItem('theme', t);
+}
+
+function showToast(msg) {
+  const t = document.getElementById('cmdToast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2000);
+}
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') { cmdBuffer = ''; return; }
+  if (e.key === 'Enter') {
+    const cmd = cmdBuffer.trim().toLowerCase();
+    cmdBuffer = '';
+    if (commands[cmd]) { sfxDing(); commands[cmd](); }
+    return;
+  }
+  if (e.key.length === 1) {
+    cmdBuffer += e.key;
+    clearTimeout(cmdTimer);
+    cmdTimer = setTimeout(() => { cmdBuffer = ''; }, CMD_TIMEOUT);
+  }
+});
+
+// ══════════════════════════════════════
+// 8. #SECRET HASH
+// ══════════════════════════════════════
 function checkSecret() {
   if (window.location.hash === '#secret') {
     document.getElementById('secretSection').classList.add('show');
-    setTimeout(() => {
-      document.getElementById('secretSection').scrollIntoView({ behavior: 'smooth' });
-    }, 100);
+    setTimeout(() => document.getElementById('secretSection').scrollIntoView({ behavior: 'smooth' }), 100);
   }
 }
 checkSecret();
 window.addEventListener('hashchange', checkSecret);
 
-// ── console greeting ──
-console.log('%c↑↑↓↓←→←→BA ', 'color:#ff6b6b;font-size:14px;font-weight:bold;');
-console.log('%ctrigger the konami code for a surprise ', 'color:#6e6b62;font-size:11px;');
+// ══════════════════════════════════════
+// CONSOLE
+// ══════════════════════════════════════
+console.log('%c 12.log ', 'background:#6c47ff;color:#fff;font-size:20px;padding:8px 16px;border-radius:6px;font-weight:bold;');
+console.log('%c musician · producer · builder ', 'color:#6e6b62;font-size:12px;');
+console.log('%c type "matrix", "neon", or "vaporwave" in the page for hidden themes ', 'color:#00c9a7;font-size:11px;');
+console.log('%c↑↑↓↓←→←→BA for a surprise ', 'color:#ff6b6b;font-size:11px;');
 </script>
 </body>
 </html>
