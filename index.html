@@ -6,7 +6,7 @@
 <title>12.log</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Inter:wght@400;500;600;700&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet" />
 <style>
   :root {
     --bg: #f5f3ee;
@@ -23,6 +23,7 @@
     --radius: 18px;
     --mono: 'Space Mono', monospace;
     --sans: 'Inter', system-ui, sans-serif;
+    --display: 'Rajdhani', sans-serif;
   }
 
   :root[data-theme="dark"] {
@@ -120,13 +121,34 @@
     position: relative;
     display: flex;
     flex-direction: column;
-    transition: transform 0.25s ease, border-color 0.25s ease, background 0.25s ease;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     animation: fadeUp 0.5s ease backwards;
+    backdrop-filter: blur(10px);
+  }
+
+  .b::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: var(--radius);
+    padding: 1px;
+    background: linear-gradient(135deg, transparent 40%, var(--accent) 100%);
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+  }
+
+  .b:hover::before {
+    opacity: 1;
   }
 
   .b:hover {
-    border-color: var(--accent);
-    transform: translateY(-2px);
+    transform: translateY(-4px);
+    box-shadow: 0 8px 32px -8px rgba(125, 211, 252, 0.25);
   }
 
   @keyframes fadeUp {
@@ -173,10 +195,10 @@
     border-radius: var(--radius);
   }
   .b-hero h1 {
-    font-family: var(--sans);
-    font-size: clamp(2rem, 4vw, 3.2rem);
+    font-family: var(--display);
+    font-size: clamp(2.5rem, 5vw, 4rem);
     font-weight: 700;
-    letter-spacing: -0.03em;
+    letter-spacing: -0.02em;
     line-height: 1.1;
     position: relative;
     z-index: 1;
@@ -219,19 +241,20 @@
     display: flex;
     justify-content: space-between;
     align-items: baseline;
-    padding: 6px 0;
+    padding: 4px 0;
   }
   .tz-row + .tz-row { border-top: 1px solid var(--border); }
   .tz-city {
-    font-family: var(--mono);
-    font-size: 0.7rem;
-    letter-spacing: 0.08em;
+    font-family: var(--display);
+    font-size: 0.68rem;
+    font-weight: 500;
+    letter-spacing: 0.05em;
     text-transform: uppercase;
     color: var(--muted);
   }
   .tz-time {
     font-family: var(--mono);
-    font-size: 0.85rem;
+    font-size: 0.78rem;
     font-weight: 700;
     color: var(--text);
   }
@@ -371,11 +394,12 @@
 
   /* label */
   .label {
-    font-family: var(--mono);
-    font-size: 0.58rem;
-    letter-spacing: 0.2em;
+    font-family: var(--display);
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.15em;
     text-transform: uppercase;
-    color: var(--muted);
+    color: var(--accent);
     margin-bottom: 14px;
   }
 
@@ -386,10 +410,10 @@
     margin-top: 14px;
   }
   .counter .num {
-    font-family: var(--mono);
-    font-size: 1.6rem;
+    font-family: var(--display);
+    font-size: 2rem;
     font-weight: 700;
-    color: var(--text);
+    color: var(--accent);
   }
   .counter .lbl {
     display: block;
@@ -1023,12 +1047,28 @@
         <span class="tz-time" data-tz="America/Los_Angeles">—</span>
       </div>
       <div class="tz-row">
-        <span class="tz-city">Seoul</span>
-        <span class="tz-time" data-tz="Asia/Seoul">—</span>
+        <span class="tz-city">New York</span>
+        <span class="tz-time" data-tz="America/New_York">—</span>
+      </div>
+      <div class="tz-row">
+        <span class="tz-city">London</span>
+        <span class="tz-time" data-tz="Europe/London">—</span>
       </div>
       <div class="tz-row">
         <span class="tz-city">Amsterdam</span>
         <span class="tz-time" data-tz="Europe/Amsterdam">—</span>
+      </div>
+      <div class="tz-row">
+        <span class="tz-city">Seoul</span>
+        <span class="tz-time" data-tz="Asia/Seoul">—</span>
+      </div>
+      <div class="tz-row">
+        <span class="tz-city">Tokyo</span>
+        <span class="tz-time" data-tz="Asia/Tokyo">—</span>
+      </div>
+      <div class="tz-row">
+        <span class="tz-city">Sydney</span>
+        <span class="tz-time" data-tz="Australia/Sydney">—</span>
       </div>
       <div style="flex:1"></div>
       <div class="marquee-wrap">
