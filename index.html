@@ -155,6 +155,10 @@
     from { opacity: 0; transform: translateY(16px); }
     to { opacity: 1; transform: translateY(0); }
   }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+  }
 
   /* sizes */
   .b-hero    { grid-column: span 8; grid-row: span 2; min-height: 280px; }
@@ -175,6 +179,7 @@
     .bento {
       grid-template-columns: 1fr;
       grid-auto-rows: auto;
+      gap: 10px;
     }
     .b-hero, .b-side-t, .b-tall, .b-wide, .b-half,
     .b-side, .b-med, .b-sm, .b-full {
@@ -182,6 +187,82 @@
       grid-row: auto;
       min-height: auto;
     }
+    .b { padding: 18px; }
+    nav { padding: 12px 16px; }
+    .b-hero h1 { font-size: 2rem; }
+    .mobile-nav { display: flex !important; }
+  }
+
+  /* ── mobile bottom nav ── */
+  .mobile-nav {
+    display: none;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: var(--bg-soft);
+    border-top: 1px solid var(--border);
+    padding: 10px 0;
+    z-index: 100;
+    justify-content: space-around;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+  }
+  .mobile-nav a, .mobile-nav button {
+    background: none;
+    border: none;
+    color: var(--muted);
+    font-family: var(--display);
+    font-size: 0.65rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    cursor: pointer;
+    padding: 6px 12px;
+    transition: color 0.2s;
+  }
+  .mobile-nav a:hover, .mobile-nav button:hover { color: var(--accent); }
+
+  /* ── loading screen ── */
+  .loader {
+    position: fixed;
+    inset: 0;
+    background: var(--bg);
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 16px;
+    transition: opacity 0.4s ease, visibility 0.4s ease;
+  }
+  .loader.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+  .loader-text {
+    font-family: var(--display);
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--accent);
+    letter-spacing: 0.2em;
+  }
+  .loader-bar {
+    width: 120px;
+    height: 2px;
+    background: var(--border);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .loader-bar::after {
+    content: '';
+    display: block;
+    width: 40%;
+    height: 100%;
+    background: var(--accent);
+    border-radius: 2px;
+    animation: loadSlide 0.8s ease-in-out infinite;
+  }
+  @keyframes loadSlide {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(350%); }
   }
 
   /* ── cards ── */
@@ -1004,6 +1085,10 @@
 <!-- 🥚 there are 30 easter eggs. good luck. -->
 <!-- 🥚 this site has zero tracking. you're a ghost. -->
 <body>
+<div class="loader" id="loader">
+  <div class="loader-text">12.log</div>
+  <div class="loader-bar"></div>
+</div>
 <canvas id="matrixCanvas"></canvas>
 <div class="grain"></div>
 <div class="scroll-progress" id="scrollProgress"></div>
@@ -1011,6 +1096,12 @@
 <div class="rc-toast" id="rcToast"></div>
 <div class="hint-toast" id="hintToast"></div>
 <div class="egg-badge" id="eggBadge">🥚 <span class="egg-num" id="eggCount">0</span>/45 found</div>
+<div class="mobile-nav">
+  <a href="#projects">projects</a>
+  <a href="#music">music</a>
+  <a href="#socials">socials</a>
+  <button onclick="switchTheme(document.documentElement.getAttribute('data-theme')==='dark'?'':'dark')">◐</button>
+</div>
 <div class="wrap">
   <nav>
     <div class="logo">12<span class="dot">.</span>log</div>
@@ -1349,6 +1440,61 @@
       </div>
     </div>
 
+    <!-- NEW: Currently Learning -->
+    <div class="b b-med" style="animation-delay:720ms">
+      <div class="label">// learning</div>
+      <div style="margin-top:10px; display:flex; flex-direction:column; gap:8px;">
+        <div style="display:flex; align-items:center; gap:8px;">
+          <span style="font-size:1rem;">📖</span>
+          <span style="font-family:var(--mono); font-size:0.72rem; color:var(--text);">rust</span>
+        </div>
+        <div style="display:flex; align-items:center; gap:8px;">
+          <span style="font-size:1rem;">🎨</span>
+          <span style="font-family:var(--mono); font-size:0.72rem; color:var(--text);">shadcn/ui</span>
+        </div>
+        <div style="display:flex; align-items:center; gap:8px;">
+          <span style="font-size:1rem;">🧠</span>
+          <span style="font-family:var(--mono); font-size:0.72rem; color:var(--text);">ml basics</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- NEW: GitHub Streak -->
+    <div class="b b-sm" style="animation-delay:740ms">
+      <div class="label">// streak</div>
+      <p style="font-family:var(--display); font-size:2.2rem; font-weight:700; color:var(--accent); margin-top:8px;">12</p>
+      <p style="font-family:var(--mono); font-size:0.6rem; color:var(--muted); margin-top:2px;">days active</p>
+      <div style="display:flex; gap:3px; margin-top:10px;">
+        <div style="width:8px; height:8px; border-radius:2px; background:var(--accent3);"></div>
+        <div style="width:8px; height:8px; border-radius:2px; background:var(--accent3);"></div>
+        <div style="width:8px; height:8px; border-radius:2px; background:var(--accent3);"></div>
+        <div style="width:8px; height:8px; border-radius:2px; background:var(--accent3);"></div>
+        <div style="width:8px; height:8px; border-radius:2px; background:var(--accent);"></div>
+        <div style="width:8px; height:8px; border-radius:2px; background:var(--border);"></div>
+        <div style="width:8px; height:8px; border-radius:2px; background:var(--border);"></div>
+      </div>
+    </div>
+
+    <!-- NEW: Support -->
+    <div class="b b-sm" style="animation-delay:760ms">
+      <div class="label">// support</div>
+      <p style="font-size:1.8rem; margin-top:8px;">☕</p>
+      <p style="font-family:var(--mono); font-size:0.72rem; color:var(--text); margin-top:6px;">
+        buy me a coffee
+      </p>
+      <a href="https://ko-fi.com/12log" target="_blank" rel="noopener" style="font-family:var(--display); font-size:0.68rem; font-weight:600; color:var(--accent); text-decoration:none; margin-top:4px; display:inline-block;">ko-fi.com/12log →</a>
+    </div>
+
+    <!-- NEW: Uptime -->
+    <div class="b b-sm" style="animation-delay:780ms">
+      <div class="label">// uptime</div>
+      <div style="margin-top:10px; display:flex; align-items:center; gap:8px;">
+        <div style="width:8px; height:8px; border-radius:50%; background:var(--accent3); animation:pulse 2s infinite;"></div>
+        <span style="font-family:var(--mono); font-size:0.72rem; color:var(--text);">all systems operational</span>
+      </div>
+      <p style="font-family:var(--mono); font-size:0.6rem; color:var(--muted); margin-top:8px;">99.9% uptime</p>
+    </div>
+
     <!-- SECRET -->
     <div id="secretSection">
       <h2>you found it</h2>
@@ -1446,6 +1592,15 @@ function showHint(msg) {
   t.textContent = msg; t.classList.add('show');
   setTimeout(() => t.classList.remove('show'), 4000);
 }
+
+// ══════════════════════════════════════
+// LOADER
+// ══════════════════════════════════════
+window.addEventListener('load', () => {
+  setTimeout(() => {
+    document.getElementById('loader').classList.add('hidden');
+  }, 600);
+});
 
 // ══════════════════════════════════════
 // THEME
@@ -1645,6 +1800,15 @@ const commands={
   12:()=>{showToast('that\'s me!');sfxDing();markEgg('12');},
   about:()=>{document.querySelector('.b:last-child').scrollIntoView({behavior:'smooth'});showToast('scrolling to about');},
   top:()=>{window.scrollTo({top:0,behavior:'smooth'});showToast('back to top');},
+  coffee:()=>{showToast('☕ brewing...');setTimeout(()=>showToast('☕ ready!'),1500);markEgg('coffee');},
+  hack:()=>{showToast('accessing mainframe...');setTimeout(()=>showToast('just kidding 😅'),2000);},
+  '8ball':()=>{const answers=['yes','no','maybe','ask again later','definitely','no way','try again'];showToast('🎱 '+answers[Math.floor(Math.random()*answers.length)]);},
+  weather:()=>{showToast('☀️ perfect coding weather');},
+  music:()=>{document.querySelector('.b-wide').scrollIntoView({behavior:'smooth'});showToast('🎵 checking the beats');},
+  stats:()=>{showToast('visitors: '+localStorage.getItem('12log_visits')+' | eggs: '+found.length+'/'+TOTAL_EGGS);},
+  clear:()=>{document.body.classList.remove('rainbow-bg');document.documentElement.style.filter='';showToast('cleared');},
+  vim:()=>{showToast('you are now in vim. press :q to exit. just kidding.'),},
+  npm:()=>{showToast('rm -rf node_modules && npm install — the classic'),},
   source:()=>{window.open('https://github.com/0124212/bento','_blank');showToast('opening source');},
   404:()=>{document.documentElement.style.filter='grayscale(1) contrast(2)';showToast('page not found... just kidding');setTimeout(()=>{document.documentElement.style.filter='';},2000);markEgg('404');},
   lol:()=>{showToast('haha, lmao even');markEgg('lol');},
