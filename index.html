@@ -799,6 +799,170 @@
   /* toast variant colors */
   .cmd-toast.success { background: var(--accent3); }
   .cmd-toast.warn { background: var(--accent2); }
+
+  /* ── round 3 easter eggs ── */
+
+  /* noise/grain overlay */
+  .grain {
+    position: fixed;
+    inset: 0;
+    z-index: 9995;
+    pointer-events: none;
+    opacity: 0.035;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+    background-repeat: repeat;
+    background-size: 256px 256px;
+  }
+
+  /* scroll progress bar */
+  .scroll-progress {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2), var(--accent3));
+    z-index: 10000;
+    transition: width 0.1s linear;
+  }
+
+  /* page load animation */
+  .wrap.loading {
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+  .wrap.loaded {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* miku theme */
+  :root[data-theme="miku"] {
+    --bg: #e8f8f5;
+    --bg-soft: #f0fdf9;
+    --card: #f0fdf9;
+    --card-hover: #d1fae5;
+    --border: #99f6e4;
+    --border-strong: #5eead4;
+    --text: #0d3b2e;
+    --muted: #0d9488;
+    --accent: #39c5bb;
+    --accent2: #e94196;
+    --accent3: #06b6d4;
+  }
+  :root[data-theme="miku"] .hero-bg {
+    background: linear-gradient(135deg, #39c5bb 0%, #e94196 50%, #06b6d4 100%);
+    opacity: 0.12;
+  }
+
+  /* card glow on hover */
+  .b::after {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    border-radius: var(--radius);
+    background: linear-gradient(135deg, var(--accent), var(--accent2), var(--accent3));
+    opacity: 0;
+    z-index: -1;
+    transition: opacity 0.3s ease;
+    filter: blur(8px);
+  }
+  .b:hover::after { opacity: 0.15; }
+
+  /* scroll rotate */
+  .b.scroll-rotated {
+    transition: transform 0.15s ease-out;
+  }
+
+  /* hint toast */
+  .hint-toast {
+    position: fixed;
+    bottom: 80px;
+    right: 24px;
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    color: var(--muted);
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 10px 14px;
+    z-index: 9998;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: all 0.3s ease;
+    max-width: 260px;
+    line-height: 1.5;
+    pointer-events: none;
+  }
+  .hint-toast.show { opacity: 1; transform: translateY(0); }
+
+  /* secret bento page */
+  #secretBento {
+    display: none;
+    grid-column: span 12;
+    background: var(--card);
+    border: 2px solid var(--accent);
+    border-radius: var(--radius);
+    padding: 32px;
+    text-align: center;
+    animation: fadeUp 0.5s ease;
+  }
+  #secretBento.show { display: block; }
+  #secretBento .pixel-art {
+    font-family: var(--mono);
+    font-size: 0.4rem;
+    line-height: 0.85;
+    color: var(--accent);
+    white-space: pre;
+    margin: 16px auto;
+    display: inline-block;
+    text-align: left;
+  }
+  #secretBento h2 {
+    font-family: var(--sans);
+    font-size: 1.4rem;
+    font-weight: 700;
+    margin-bottom: 8px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  #secretBento p {
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    color: var(--muted);
+    line-height: 1.8;
+  }
+
+  /* audio visualizer bars */
+  .viz-bars {
+    display: flex;
+    gap: 2px;
+    align-items: flex-end;
+    height: 24px;
+    opacity: 0;
+    transition: opacity 0.3s;
+    margin-top: 8px;
+  }
+  .b:hover .viz-bars { opacity: 1; }
+  .viz-bar {
+    width: 3px;
+    background: var(--accent);
+    border-radius: 2px;
+    animation: vizBounce 0.8s ease-in-out infinite alternate;
+  }
+  .viz-bar:nth-child(1) { animation-delay: 0s; }
+  .viz-bar:nth-child(2) { animation-delay: 0.1s; }
+  .viz-bar:nth-child(3) { animation-delay: 0.2s; }
+  .viz-bar:nth-child(4) { animation-delay: 0.3s; }
+  .viz-bar:nth-child(5) { animation-delay: 0.15s; }
+  @keyframes vizBounce {
+    0% { height: 4px; }
+    100% { height: 20px; }
+  }
+
+  /* text scramble */
+  .scramble-hover { cursor: default; }
 </style>
 </head>
 <!-- 🥚 you're reading the source? you're already cool. -->
@@ -808,9 +972,12 @@
 <!-- 🥚 this site has zero tracking. you're a ghost. -->
 <body>
 <canvas id="matrixCanvas"></canvas>
+<div class="grain"></div>
+<div class="scroll-progress" id="scrollProgress"></div>
 <div class="cmd-toast" id="cmdToast"></div>
 <div class="rc-toast" id="rcToast"></div>
-<div class="egg-badge" id="eggBadge">🥚 <span class="egg-num" id="eggCount">0</span>/30 found</div>
+<div class="hint-toast" id="hintToast"></div>
+<div class="egg-badge" id="eggBadge">🥚 <span class="egg-num" id="eggCount">0</span>/45 found</div>
 <div class="wrap">
   <nav>
     <div class="logo">12<span class="dot">.</span>log</div>
@@ -1010,6 +1177,17 @@
     ╚══════════════════════════════════╝
       </div>
     </div>
+
+    <!-- SECRET BENTO (konami 5x) -->
+    <div id="secretBento">
+      <h2>✧ secret bento ✧</h2>
+      <p>you entered the konami code 5 times. you are truly dedicated.</p>
+      <div class="pixel-art" id="pixelArt"></div>
+      <p style="margin-top:12px; font-size:0.65rem;">this is a secret bento grid only the most curious visitors see.</p>
+      <div class="viz-bars" style="justify-content:center; margin-top:16px;">
+        <div class="viz-bar"></div><div class="viz-bar"></div><div class="viz-bar"></div><div class="viz-bar"></div><div class="viz-bar"></div><div class="viz-bar"></div><div class="viz-bar"></div><div class="viz-bar"></div>
+      </div>
+    </div>
   </div>
 
   <footer>
@@ -1038,11 +1216,13 @@ function sfxGlitch() { playTone(150,0.1,'sawtooth',0.06); playTone(90,0.15,'squa
 function sfxShake() { playTone(200,0.08,'square',0.06); playTone(300,0.06,'sawtooth',0.04); playTone(150,0.1,'sine',0.05); }
 function sfxHover() { playTone(600,0.04,'sine',0.03); }
 function sfxNav() { playTone(500,0.05,'triangle',0.04); }
+function sfxType() { playTone(300+Math.random()*100,0.02,'square',0.015); }
+function sfxMiku() { playTone(523,0.12,'sine',0.08); setTimeout(()=>playTone(659,0.12,'sine',0.08),80); setTimeout(()=>playTone(784,0.15,'sine',0.1),160); }
 
 // ══════════════════════════════════════
 // EASTER EGG COUNTER
 // ══════════════════════════════════════
-const TOTAL_EGGS = 30;
+const TOTAL_EGGS = 45;
 let found = JSON.parse(localStorage.getItem('12log_eggs') || '[]');
 function markEgg(id) {
   if (!found.includes(id)) { found.push(id); localStorage.setItem('12log_eggs', JSON.stringify(found)); }
@@ -1050,7 +1230,7 @@ function markEgg(id) {
   document.getElementById('eggCount').textContent = found.length;
   badge.classList.add('show');
   if (found.length >= TOTAL_EGGS) {
-    showToast('🎉 you found all ' + TOTAL_EGGS + ' easter eggs! legend.');
+    showToast('🎉 you found all ' + TOTAL_EGGS + ' easter eggs! absolute legend.', 'success');
     sfxDing(); sfxDing(); spawnConfetti();
   }
 }
@@ -1072,6 +1252,11 @@ function showRCToast(msg) {
   const t = document.getElementById('rcToast');
   t.textContent = msg; t.classList.add('show');
   setTimeout(() => t.classList.remove('show'), 2500);
+}
+function showHint(msg) {
+  const t = document.getElementById('hintToast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 4000);
 }
 
 // ══════════════════════════════════════
@@ -1100,6 +1285,39 @@ function tickClocks() {
 tickClocks(); setInterval(tickClocks, 10000);
 
 // ══════════════════════════════════════
+// PAGE LOAD ANIMATION
+// ══════════════════════════════════════
+document.querySelector('.wrap').classList.add('loading');
+requestAnimationFrame(()=>{ requestAnimationFrame(()=>{ document.querySelector('.wrap').classList.remove('loading'); document.querySelector('.wrap').classList.add('loaded'); }); });
+
+// ══════════════════════════════════════
+// SCROLL PROGRESS
+// ══════════════════════════════════════
+const scrollProgress = document.getElementById('scrollProgress');
+window.addEventListener('scroll', () => {
+  const scrollTop = document.documentElement.scrollTop;
+  const scrollHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+  const progress = (scrollTop / scrollHeight) * 100;
+  scrollProgress.style.width = progress + '%';
+});
+
+// ══════════════════════════════════════
+// SCROLL-BASED CARD ROTATION
+// ══════════════════════════════════════
+const scrollObserver = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      const rect = e.boundingClientRect;
+      const center = window.innerHeight / 2;
+      const offset = (rect.top - center) / center;
+      e.target.style.transform = `rotate(${offset * 2}deg) translateY(${offset * -8}px)`;
+      e.target.classList.add('scroll-rotated');
+    }
+  });
+}, { threshold: Array.from({length:20}, (_,i)=>i/20) });
+document.querySelectorAll('.b').forEach(c => scrollObserver.observe(c));
+
+// ══════════════════════════════════════
 // 1. KONAMI CODE (with multi-enter bonus)
 // ══════════════════════════════════════
 const konami = [38,38,40,40,37,39,37,39,66,65];
@@ -1109,11 +1327,17 @@ document.addEventListener('keydown', e => {
   if (e.keyCode === konami[konamiIdx]) { konamiIdx++;
     if (konamiIdx === konami.length) { konamiIdx = 0;
       konamiCount++; localStorage.setItem('12log_konami', konamiCount);
-      if (konamiCount >= 3 && konamiCount % 3 === 0) {
-        document.body.classList.add('rainbow-bg');
-        showToast('🌈 rainbow mode!', 'success');
-        setTimeout(()=>document.body.classList.remove('rainbow-bg'), 8000);
-        sfxDing(); spawnConfetti();
+      if (konamiCount >= 5 && konamiCount % 5 === 0) {
+        document.getElementById('secretBento').classList.add('show');
+        document.getElementById('secretBento').scrollIntoView({behavior:'smooth'});
+        showToast('🌟 SECRET BENTO UNLOCKED!', 'success');
+        sfxDing(); sfxDing(); spawnConfetti();
+        generatePixelArt();
+      } else if (konamiCount === 3 || (konamiCount > 3 && konamiCount % 3 === 0)) {
+        switchTheme('miku');
+        sfxMiku();
+        showToast('🩵 miku theme activated!', 'success');
+        spawnConfetti();
       } else if (konamiCount === 1) {
         sfxDing(); spawnConfetti();
         document.getElementById('secretSection').classList.add('show');
@@ -1127,7 +1351,7 @@ document.addEventListener('keydown', e => {
   } else { konamiIdx = 0; }
 });
 function spawnConfetti() {
-  const cols = ['#6c47ff','#ff6b6b','#00c9a7','#ffd93d','#ff85ff','#4ecdc4','#ff6600','#cc0000','#00aa00'];
+  const cols = ['#6c47ff','#ff6b6b','#00c9a7','#ffd93d','#ff85ff','#4ecdc4','#ff6600','#cc0000','#00aa00','#39c5bb','#e94196'];
   for (let i=0;i<80;i++) {
     const el = document.createElement('div'); el.className='confetti-piece';
     el.style.left = Math.random()*100+'vw'; el.style.background = cols[i%cols.length];
@@ -1204,10 +1428,11 @@ const commands={
   halloween:()=>{switchTheme('halloween');showToast('trick or treat 🎃','success');markEgg('halloween');},
   xmas:()=>{switchTheme('christmas');showToast('ho ho ho 🎄','success');markEgg('christmas');},
   christmas:()=>{switchTheme('christmas');showToast('ho ho ho 🎄','success');markEgg('christmas');},
+  miku:()=>{switchTheme('miku');sfxMiku();showToast('🩵 miku theme!','success');markEgg('miku');},
   dark:()=>{switchTheme('dark');showToast('dark mode');},
   light:()=>{switchTheme('light');showToast('light mode');},
   reset:()=>{switchTheme('light');if(matrixActive)stopMatrix();showToast('reset to default');},
-  help:()=>{showToast('matrix, neon, vapor, midnight, halloween, xmas, dark, light, reset');},
+  help:()=>{showToast('matrix, neon, vapor, midnight, halloween, xmas, miku, dark, light, hint');},
   whoami:()=>{showToast('you are a curious one');markEgg('whoami');},
   hello:()=>{showToast('hey :)');sfxDing();},
   secret:()=>{document.getElementById('secretSection').classList.add('show');document.getElementById('secretSection').scrollIntoView({behavior:'smooth'});showToast('secret revealed');markEgg('secret');},
@@ -1238,11 +1463,12 @@ const commands={
   ok:()=>{showToast('ok 👍');},
   bruh:()=>{showToast('bruh moment');markEgg('bruh');},
   noice:()=>{showToast('noice 👌');markEgg('noice');},
+  hint:()=>{showHint(getRandomHint());markEgg('hint');},
 };
 document.addEventListener('keydown',e=>{
   if(e.key==='Escape'){cmdBuffer='';return;}
   if(e.key==='Enter'){const cmd=cmdBuffer.trim().toLowerCase();cmdBuffer='';if(commands[cmd]){sfxDing();commands[cmd]();}return;}
-  if(e.key.length===1){cmdBuffer+=e.key;clearTimeout(cmdTimer);cmdTimer=setTimeout(()=>{cmdBuffer='';},1500);}
+  if(e.key.length===1){cmdBuffer+=e.key;sfxType();clearTimeout(cmdTimer);cmdTimer=setTimeout(()=>{cmdBuffer='';},1500);}
 });
 
 // ══════════════════════════════════════
@@ -1512,7 +1738,86 @@ document.addEventListener('dblclick', e => {
 });
 
 // ══════════════════════════════════════
-// 25. CONSOLE (mega version)
+// 25. EASTER EGG HINT SYSTEM
+// ══════════════════════════════════════
+const allHints = [
+  'try clicking the logo 10 times fast...',
+  'type "matrix" then press Enter',
+  'what happens if you right-click?',
+  'switch tabs and come back...',
+  'shake your phone (mobile)',
+  'type "hint" for more hints',
+  'the konami code works (↑↑↓↓←→←→BA)',
+  'try typing "vaporwave" or "neon"',
+  'there\'s something at #secret',
+  'type "help" to see all commands',
+  'enter the konami code 3 times for a surprise',
+  'type "miku" for a special theme',
+  'what happens at midnight?',
+  'try typing "party" or "dance"',
+  'scroll slowly and watch the cards',
+  'type "ghost" and wait...',
+  'double-click somewhere fast',
+  'type "ascii" and check the console',
+  'there are hidden URL paths...',
+  'type "credits" for a message',
+  'try "rainbow" as a command',
+  'type "12" to see what happens',
+  'the visitor counter counts your visits',
+  'type "invert" for a trippy effect',
+  'there are 45 easter eggs total',
+];
+function getRandomHint() {
+  const unfound = allHints.filter((_, i) => !found.includes('hint'+i));
+  if (unfound.length === 0) return 'you\'ve seen all hints! try finding the remaining eggs yourself.';
+  const idx = Math.floor(Math.random() * allHints.length);
+  return allHints[idx];
+}
+
+// ══════════════════════════════════════
+// 26. PIXEL ART GENERATOR
+// ══════════════════════════════════════
+function generatePixelArt() {
+  const art = [
+    '    ░░░░░░░░░░░░░░░░    ',
+    '  ░░░░░░████████░░░░░░  ',
+    '  ░░░████████████████░░  ',
+    '  ░░██░░██░░░░██░░██░░  ',
+    '  ░░██░░██░░░░██░░██░░  ',
+    '  ░░░████░░░░░░████░░░  ',
+    '  ░░░░░░░░██░░░░░░░░░░  ',
+    '  ░░░░░██░░░░░░██░░░░░  ',
+    '  ░░░░░░░░░░░░░░░░░░░░  ',
+    '    ░░░░░░░░░░░░░░░░    ',
+  ];
+  document.getElementById('pixelArt').textContent = art.join('\n');
+  markEgg('pixel');
+}
+
+// ══════════════════════════════════════
+// 27. TEXT SCRAMBLE ON HOVER
+// ══════════════════════════════════════
+(function(){
+  const chars = '!@#$%^&*()_+-=[]{}|;:,.<>?/~`ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  document.querySelectorAll('.label').forEach(el => {
+    const orig = el.textContent;
+    el.classList.add('scramble-hover');
+    el.addEventListener('mouseenter', () => {
+      let iterations = 0;
+      const interval = setInterval(() => {
+        el.textContent = orig.split('').map((c, i) => {
+          if (i < iterations) return orig[i];
+          return chars[Math.floor(Math.random() * chars.length)];
+        }).join('');
+        iterations += 0.5;
+        if (iterations >= orig.length) { clearInterval(interval); el.textContent = orig; }
+      }, 30);
+    });
+  });
+})();
+
+// ══════════════════════════════════════
+// 28. CONSOLE (mega version)
 // ══════════════════════════════════════
 console.log('%c ', 'font-size:40px');
 console.log('%c ███╗   ██╗███████╗████████╗', 'color:#6c47ff;font-size:14px;font-family:monospace;');
@@ -1526,7 +1831,7 @@ console.log('%c ─────────────────────�
 console.log('%c musician · producer · builder', 'color:#6e6b62;font-size:12px;');
 console.log('%c los angeles, ca', 'color:#6e6b62;font-size:11px;');
 console.log('%c ─────────────────────────────', 'color:#6e6b62;font-size:10px;');
-console.log('%c 30 easter eggs hidden in this page.', 'color:#00c9a7;font-size:11px;');
+console.log('%c 45 easter eggs hidden in this page.', 'color:#00c9a7;font-size:11px;');
 console.log('%c type "help" on the page for commands.', 'color:#00c9a7;font-size:11px;');
 console.log('%c ↑↑↓↓←→←→BA', 'color:#ff6b6b;font-size:11px;');
 console.log('%c ' + found.length + '/' + TOTAL_EGGS + ' eggs found', 'color:#ffd93d;font-size:11px;');
