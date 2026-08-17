@@ -1161,6 +1161,37 @@
       </div>
     </div>
 
+    <!-- SAMPLE: currently listening -->
+    <div class="b b-sm" style="animation-delay:500ms">
+      <div class="label">// now playing</div>
+      <p style="font-family:var(--mono); font-size:0.72rem; color:var(--muted); margin-top:8px;">
+        🎵 joji — glimpse of us
+      </p>
+      <div class="viz-bars" style="margin-top:10px;">
+        <div class="viz-bar"></div><div class="viz-bar"></div><div class="viz-bar"></div><div class="viz-bar"></div><div class="viz-bar"></div>
+      </div>
+    </div>
+
+    <!-- SAMPLE: current mood -->
+    <div class="b b-sm" style="animation-delay:520ms">
+      <div class="label">// mood</div>
+      <p style="font-size:2rem; margin-top:8px;">🌊</p>
+      <p style="font-family:var(--mono); font-size:0.65rem; color:var(--muted); margin-top:4px;">
+        chill & focused
+      </p>
+    </div>
+
+    <!-- SAMPLE: coming soon -->
+    <div class="b b-sm" style="animation-delay:540ms">
+      <div class="label">// coming soon</div>
+      <p style="font-family:var(--sans); font-size:0.82rem; font-weight:600; margin-top:8px; color:var(--text);">
+        new EP dropping soon
+      </p>
+      <p style="font-family:var(--mono); font-size:0.62rem; color:var(--muted); margin-top:4px;">
+        3 tracks · ambient · lofi
+      </p>
+    </div>
+
     <!-- SECRET -->
     <div id="secretSection">
       <h2>you found it</h2>
@@ -1310,7 +1341,7 @@ const scrollObserver = new IntersectionObserver(entries => {
       const rect = e.boundingClientRect;
       const center = window.innerHeight / 2;
       const offset = (rect.top - center) / center;
-      e.target.style.transform = `rotate(${offset * 2}deg) translateY(${offset * -8}px)`;
+      e.target.style.transform = `rotate(${offset * 1}deg) translateY(${offset * -4}px)`;
       e.target.classList.add('scroll-rotated');
     }
   });
@@ -1410,7 +1441,7 @@ function stopMatrix(){matrixActive=false;matrixCanvas.classList.remove('active')
 // ══════════════════════════════════════
 document.querySelectorAll('.b').forEach(card=>{
   card.classList.add('tilt');
-  card.addEventListener('mousemove',e=>{const r=card.getBoundingClientRect();const rx=((e.clientY-r.top)/r.height-0.5)*-9;const ry=((e.clientX-r.left)/r.width-0.5)*9;card.style.transform=`perspective(600px) rotateX(${rx}deg) rotateY(${ry}deg) translateY(-3px)`;});
+  card.addEventListener('mousemove',e=>{const r=card.getBoundingClientRect();const rx=((e.clientY-r.top)/r.height-0.5)*-5;const ry=((e.clientX-r.left)/r.width-0.5)*5;card.style.transform=`perspective(600px) rotateX(${rx}deg) rotateY(${ry}deg) translateY(-2px)`;});
   card.addEventListener('mouseleave',()=>{card.style.transition='transform 0.5s cubic-bezier(0.23, 1, 0.32, 1)';card.style.transform='';setTimeout(()=>{card.style.transition='';},500);});
   card.addEventListener('mouseenter',()=>{sfxHover();});
 });
@@ -1662,7 +1693,7 @@ document.addEventListener('keydown', e => {
     requestAnimationFrame(() => {
       const cx = (e.clientX / window.innerWidth - 0.5) * 2;
       const cy = (e.clientY / window.innerHeight - 0.5) * 2;
-      bento.style.transform = `perspective(2000px) rotateY(${cx * 0.8}deg) rotateX(${-cy * 0.5}deg)`;
+      bento.style.transform = `perspective(2000px) rotateY(${cx * 0.4}deg) rotateX(${-cy * 0.3}deg)`;
       ticking = false;
     });
   });
