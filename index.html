@@ -105,8 +105,9 @@
   .bento {
     display: grid;
     grid-template-columns: repeat(12, 1fr);
-    grid-auto-rows: minmax(0, auto);
-    gap: 14px;
+    grid-auto-rows: minmax(120px, auto);
+    grid-auto-flow: dense;
+    gap: 12px;
     margin-top: 0;
   }
 
@@ -125,7 +126,7 @@
 
   .b:hover {
     border-color: var(--accent);
-    transform: translateY(-3px);
+    transform: translateY(-2px);
   }
 
   @keyframes fadeUp {
@@ -144,10 +145,18 @@
   .b-full    { grid-column: span 12; grid-row: span 1; }
   .b-half    { grid-column: span 6; grid-row: span 1; }
 
+  /* ensure cards fill height */
+  .b > * { flex-shrink: 0; }
+  .b > p { flex-shrink: 1; }
+
   @media (max-width: 800px) {
+    .bento {
+      grid-template-columns: 1fr;
+      grid-auto-rows: auto;
+    }
     .b-hero, .b-side-t, .b-tall, .b-wide, .b-half,
     .b-side, .b-med, .b-sm, .b-full {
-      grid-column: span 12;
+      grid-column: span 1;
       grid-row: auto;
       min-height: auto;
     }
@@ -1031,13 +1040,13 @@
     </div>
 
     <!-- QUOTE -->
-    <div class="b b-side" style="animation-delay:120ms">
+    <div class="b b-med" style="animation-delay:120ms">
       <div class="quote-text">"Simplicity is prerequisite for reliability."</div>
       <div class="quote-attr">— Dijkstra</div>
     </div>
 
     <!-- COUNTERS -->
-    <div class="b b-side" style="animation-delay:180ms">
+    <div class="b b-med" style="animation-delay:180ms">
       <div class="label">// stats</div>
       <div class="counter-row">
         <div class="counter">
@@ -1052,6 +1061,18 @@
           <div class="num">∞</div>
           <div class="lbl">curiosity</div>
         </div>
+      </div>
+    </div>
+
+    <!-- TERMINAL (moved up to fill row) -->
+    <div class="b b-med" style="animation-delay:360ms">
+      <div class="label">// flow</div>
+      <div class="term">
+        <span class="prompt">$</span> <span class="dim">how this works</span><br />
+        memos <span class="ok">→</span> repo push <span class="ok">→</span> static site<br />
+        <br />
+        <span class="prompt">$</span> <span class="dim">location</span><br />
+        <span class="hl">Los Angeles, CA</span>
       </div>
     </div>
 
@@ -1122,18 +1143,6 @@
       </div>
     </div>
 
-    <!-- TERMINAL -->
-    <div class="b b-med" style="animation-delay:360ms">
-      <div class="label">// flow</div>
-      <div class="term">
-        <span class="prompt">$</span> <span class="dim">how this works</span><br />
-        memos <span class="ok">→</span> repo push <span class="ok">→</span> static site<br />
-        <br />
-        <span class="prompt">$</span> <span class="dim">location</span><br />
-        <span class="hl">Los Angeles, CA</span>
-      </div>
-    </div>
-
     <!-- SOCIALS -->
     <div class="b b-half" style="animation-delay:420ms">
       <div class="label">// find me</div>
@@ -1161,7 +1170,7 @@
       </div>
     </div>
 
-    <!-- SAMPLE: currently listening -->
+    <!-- SAMPLE ROW A: 4 × sm =12 -->
     <div class="b b-sm" style="animation-delay:500ms">
       <div class="label">// now playing</div>
       <p style="font-family:var(--mono); font-size:0.72rem; color:var(--muted); margin-top:8px;">
@@ -1172,7 +1181,6 @@
       </div>
     </div>
 
-    <!-- SAMPLE: current mood -->
     <div class="b b-sm" style="animation-delay:520ms">
       <div class="label">// mood</div>
       <p style="font-size:2rem; margin-top:8px;">🌊</p>
@@ -1181,8 +1189,25 @@
       </p>
     </div>
 
-    <!-- SAMPLE: coming soon -->
-    <div class="b b-sm" style="animation-delay:540ms">
+    <div class="b b-sm" style="animation-delay:580ms">
+      <div class="label">// reading</div>
+      <p style="font-family:var(--sans); font-size:0.82rem; font-weight:600; margin-top:8px; color:var(--text);">
+        the design of everyday things
+      </p>
+      <p style="font-family:var(--mono); font-size:0.62rem; color:var(--muted); margin-top:4px;">
+        don norman · 📖 ch. 7
+      </p>
+    </div>
+
+    <div class="b b-sm" style="animation-delay:600ms">
+      <div class="label">// hot take</div>
+      <p style="font-family:var(--sans); font-size:0.82rem; font-style:italic; line-height:1.5; margin-top:8px; color:var(--text);">
+        "the best code is the code you never write"
+      </p>
+    </div>
+
+    <!-- SAMPLE ROW B: 3 × med =12 -->
+    <div class="b b-med" style="animation-delay:540ms">
       <div class="label">// coming soon</div>
       <p style="font-family:var(--sans); font-size:0.82rem; font-weight:600; margin-top:8px; color:var(--text);">
         new EP dropping soon
@@ -1192,7 +1217,6 @@
       </p>
     </div>
 
-    <!-- SAMPLE: current project progress -->
     <div class="b b-med" style="animation-delay:560ms">
       <div class="label">// current project</div>
       <p style="font-family:var(--sans); font-size:0.88rem; font-weight:700; margin-top:8px; color:var(--text);">
@@ -1204,27 +1228,7 @@
       <p style="font-family:var(--mono); font-size:0.6rem; color:var(--muted); margin-top:6px;">65% complete</p>
     </div>
 
-    <!-- SAMPLE: currently reading -->
-    <div class="b b-sm" style="animation-delay:580ms">
-      <div class="label">// reading</div>
-      <p style="font-family:var(--sans); font-size:0.82rem; font-weight:600; margin-top:8px; color:var(--text);">
-        the design of everyday things
-      </p>
-      <p style="font-family:var(--mono); font-size:0.62rem; color:var(--muted); margin-top:4px;">
-        don norman · 📖 ch. 7
-      </p>
-    </div>
-
-    <!-- SAMPLE: hot take -->
-    <div class="b b-sm" style="animation-delay:600ms">
-      <div class="label">// hot take</div>
-      <p style="font-family:var(--sans); font-size:0.82rem; font-style:italic; line-height:1.5; margin-top:8px; color:var(--text);">
-        "the best code is the code you never write"
-      </p>
-    </div>
-
-    <!-- SAMPLE: tool of the day -->
-    <div class="b b-sm" style="animation-delay:620ms">
+    <div class="b b-med" style="animation-delay:620ms">
       <div class="label">// tool of the day</div>
       <p style="font-size:1.8rem; margin-top:8px;">⚡</p>
       <p style="font-family:var(--mono); font-size:0.72rem; font-weight:700; color:var(--text); margin-top:4px;">
@@ -1235,7 +1239,7 @@
       </p>
     </div>
 
-    <!-- SAMPLE: words of wisdom -->
+    <!-- SAMPLE ROW C: wide + 2 × sm =12 -->
     <div class="b b-wide" style="animation-delay:640ms">
       <div class="label">// words of wisdom from the internet</div>
       <div style="display:flex; gap:16px; margin-top:12px; flex-wrap:wrap;">
@@ -1254,8 +1258,7 @@
       </div>
     </div>
 
-    <!-- SAMPLE: goals -->
-    <div class="b b-med" style="animation-delay:660ms">
+    <div class="b b-sm" style="animation-delay:660ms">
       <div class="label">// goals this month</div>
       <div style="margin-top:10px; display:flex; flex-direction:column; gap:6px;">
         <div style="display:flex; align-items:center; gap:8px;">
@@ -1277,8 +1280,7 @@
       </div>
     </div>
 
-    <!-- SAMPLE: recently bookmarked -->
-    <div class="b b-med" style="animation-delay:680ms">
+    <div class="b b-sm" style="animation-delay:680ms">
       <div class="label">// bookmarks</div>
       <div style="margin-top:10px; display:flex; flex-direction:column; gap:8px;">
         <a href="#" style="font-family:var(--mono); font-size:0.72rem; color:var(--accent); text-decoration:none;">→ bento.me</a>
