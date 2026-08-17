@@ -672,13 +672,136 @@
     position: relative;
     z-index: 1;
   }
+
+  /* ── round 2 easter eggs ── */
+
+  /* visitor counter */
+  .visitor-counter {
+    font-family: var(--mono);
+    font-size: 0.58rem;
+    color: var(--muted);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 6px 10px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 12px;
+  }
+  .visitor-counter .digits {
+    font-weight: 700;
+    color: var(--accent2);
+    letter-spacing: 0.08em;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 2px 6px;
+    font-size: 0.65rem;
+  }
+
+  /* rainbow mode */
+  .rainbow-bg {
+    animation: rainbowCycle 3s linear infinite !important;
+  }
+  @keyframes rainbowCycle {
+    0%   { background-color: #ff0000; }
+    14%  { background-color: #ff7700; }
+    28%  { background-color: #ffff00; }
+    42%  { background-color: #00ff00; }
+    57%  { background-color: #0000ff; }
+    71%  { background-color: #8b00ff; }
+    85%  { background-color: #ff00ff; }
+    100% { background-color: #ff0000; }
+  }
+
+  /* card focused (J/K nav) */
+  .b.focused {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+    transform: translateY(-3px);
+  }
+
+  /* midnight mode */
+  :root[data-theme="midnight"] {
+    --bg: #050510;
+    --bg-soft: #08081a;
+    --card: #0c0c20;
+    --card-hover: #11112a;
+    --border: #1a1a3a;
+    --border-strong: #2a2a5a;
+    --text: #c8c6ff;
+    --muted: #5a5880;
+    --accent: #7b5cff;
+    --accent2: #ff6b9d;
+    --accent3: #00e5c0;
+  }
+
+  /* halloween mode */
+  :root[data-theme="halloween"] {
+    --bg: #0d0800;
+    --bg-soft: #151000;
+    --card: #1a1200;
+    --card-hover: #221a00;
+    --border: #44220088;
+    --border-strong: #664400aa;
+    --text: #ffd699;
+    --muted: #996633;
+    --accent: #ff6600;
+    --accent2: #cc00ff;
+    --accent3: #00cc44;
+  }
+
+  /* christmas mode */
+  :root[data-theme="christmas"] {
+    --bg: #0a0a0a;
+    --bg-soft: #110808;
+    --card: #180a0a;
+    --card-hover: #200e0e;
+    --border: #33000044;
+    --border-strong: #66000066;
+    --text: #ffe0e0;
+    --muted: #884444;
+    --accent: #cc0000;
+    --accent2: #00aa00;
+    --accent3: #ffcc00;
+  }
+
+  /* color drift */
+  .b.drifting {
+    transition: border-color 2s ease, background 2s ease;
+  }
+
+  /* long press ripple */
+  .lp-ripple {
+    position: fixed;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    border: 2px solid var(--accent);
+    pointer-events: none;
+    z-index: 9998;
+    animation: lpExpand 0.8s ease-out forwards;
+  }
+  @keyframes lpExpand {
+    0% { transform: translate(-50%,-50%) scale(0); opacity: 1; }
+    100% { transform: translate(-50%,-50%) scale(3); opacity: 0; }
+  }
+
+  /* toast variant colors */
+  .cmd-toast.success { background: var(--accent3); }
+  .cmd-toast.warn { background: var(--accent2); }
 </style>
 </head>
+<!-- 🥚 you're reading the source? you're already cool. -->
+<!-- 🥚 try going to #secret or typing "help" on the page -->
+<!-- 🥚 ↑↑↓↓←→←→BA works too -->
+<!-- 🥚 there are 30 easter eggs. good luck. -->
+<!-- 🥚 this site has zero tracking. you're a ghost. -->
 <body>
 <canvas id="matrixCanvas"></canvas>
 <div class="cmd-toast" id="cmdToast"></div>
 <div class="rc-toast" id="rcToast"></div>
-<div class="egg-badge" id="eggBadge">🥚 <span class="egg-num" id="eggCount">0</span>/15 found</div>
+<div class="egg-badge" id="eggBadge">🥚 <span class="egg-num" id="eggCount">0</span>/30 found</div>
 <div class="wrap">
   <nav>
     <div class="logo">12<span class="dot">.</span>log</div>
@@ -881,6 +1004,8 @@
   </div>
 
   <footer>
+    <div class="visitor-counter">visitor #<span class="digits" id="visitorNum">000000</span></div>
+    <br>
     made with memos + cloudflare · <a href="https://github.com/0124212/bento" target="_blank" rel="noopener">source</a>
   </footer>
 </div>
@@ -902,11 +1027,13 @@ function sfxKey() { playTone(400+Math.random()*200,0.03,'square',0.02); }
 function sfxDing() { playTone(880,0.15,'sine',0.1); setTimeout(()=>playTone(1100,0.2,'sine',0.1),100); }
 function sfxGlitch() { playTone(150,0.1,'sawtooth',0.06); playTone(90,0.15,'square',0.04); }
 function sfxShake() { playTone(200,0.08,'square',0.06); playTone(300,0.06,'sawtooth',0.04); playTone(150,0.1,'sine',0.05); }
+function sfxHover() { playTone(600,0.04,'sine',0.03); }
+function sfxNav() { playTone(500,0.05,'triangle',0.04); }
 
 // ══════════════════════════════════════
 // EASTER EGG COUNTER
 // ══════════════════════════════════════
-const TOTAL_EGGS = 15;
+const TOTAL_EGGS = 30;
 let found = JSON.parse(localStorage.getItem('12log_eggs') || '[]');
 function markEgg(id) {
   if (!found.includes(id)) { found.push(id); localStorage.setItem('12log_eggs', JSON.stringify(found)); }
@@ -914,8 +1041,8 @@ function markEgg(id) {
   document.getElementById('eggCount').textContent = found.length;
   badge.classList.add('show');
   if (found.length >= TOTAL_EGGS) {
-    showToast('🎉 you found all ' + TOTAL_EGGS + ' easter eggs!');
-    sfxDing(); sfxDing();
+    showToast('🎉 you found all ' + TOTAL_EGGS + ' easter eggs! legend.');
+    sfxDing(); sfxDing(); spawnConfetti();
   }
 }
 if (found.length > 0) {
@@ -926,9 +1053,10 @@ if (found.length > 0) {
 // ══════════════════════════════════════
 // TOAST
 // ══════════════════════════════════════
-function showToast(msg) {
+function showToast(msg, type) {
   const t = document.getElementById('cmdToast');
-  t.textContent = msg; t.classList.add('show');
+  t.textContent = msg; t.className = 'cmd-toast' + (type ? ' ' + type : '');
+  t.classList.add('show');
   setTimeout(() => t.classList.remove('show'), 2500);
 }
 function showRCToast(msg) {
@@ -963,22 +1091,34 @@ function tickClocks() {
 tickClocks(); setInterval(tickClocks, 10000);
 
 // ══════════════════════════════════════
-// 1. KONAMI CODE
+// 1. KONAMI CODE (with multi-enter bonus)
 // ══════════════════════════════════════
 const konami = [38,38,40,40,37,39,37,39,66,65];
-let konamiIdx = 0;
+let konamiIdx = 0, konamiCount = parseInt(localStorage.getItem('12log_konami') || '0');
 document.addEventListener('keydown', e => {
   sfxKey();
   if (e.keyCode === konami[konamiIdx]) { konamiIdx++;
-    if (konamiIdx === konami.length) { konamiIdx = 0; sfxDing(); spawnConfetti();
-      document.getElementById('secretSection').classList.add('show');
-      document.getElementById('secretSection').scrollIntoView({behavior:'smooth'});
+    if (konamiIdx === konami.length) { konamiIdx = 0;
+      konamiCount++; localStorage.setItem('12log_konami', konamiCount);
+      if (konamiCount >= 3 && konamiCount % 3 === 0) {
+        document.body.classList.add('rainbow-bg');
+        showToast('🌈 rainbow mode!', 'success');
+        setTimeout(()=>document.body.classList.remove('rainbow-bg'), 8000);
+        sfxDing(); spawnConfetti();
+      } else if (konamiCount === 1) {
+        sfxDing(); spawnConfetti();
+        document.getElementById('secretSection').classList.add('show');
+        document.getElementById('secretSection').scrollIntoView({behavior:'smooth'});
+      } else {
+        sfxDing(); spawnConfetti();
+        showToast('konami x' + konamiCount + '!', 'success');
+      }
       markEgg('konami');
     }
   } else { konamiIdx = 0; }
 });
 function spawnConfetti() {
-  const cols = ['#6c47ff','#ff6b6b','#00c9a7','#ffd93d','#ff85ff','#4ecdc4'];
+  const cols = ['#6c47ff','#ff6b6b','#00c9a7','#ffd93d','#ff85ff','#4ecdc4','#ff6600','#cc0000','#00aa00'];
   for (let i=0;i<80;i++) {
     const el = document.createElement('div'); el.className='confetti-piece';
     el.style.left = Math.random()*100+'vw'; el.style.background = cols[i%cols.length];
@@ -1033,12 +1173,13 @@ function drawMatrix(){if(!matrixActive)return;mCtx.fillStyle='rgba(0,0,0,0.05)';
 function stopMatrix(){matrixActive=false;matrixCanvas.classList.remove('active');if(matrixAnimId)clearTimeout(matrixAnimId);mCtx.clearRect(0,0,matrixCanvas.width,matrixCanvas.height);}
 
 // ══════════════════════════════════════
-// 6. CARD 3D TILT
+// 6. CARD 3D TILT + HOVER SOUND
 // ══════════════════════════════════════
 document.querySelectorAll('.b').forEach(card=>{
   card.classList.add('tilt');
   card.addEventListener('mousemove',e=>{const r=card.getBoundingClientRect();const rx=((e.clientY-r.top)/r.height-0.5)*-6;const ry=((e.clientX-r.left)/r.width-0.5)*6;card.style.transform=`perspective(600px) rotateX(${rx}deg) rotateY(${ry}deg) translateY(-3px)`;});
   card.addEventListener('mouseleave',()=>{card.style.transform='';});
+  card.addEventListener('mouseenter',()=>{sfxHover();});
 });
 
 // ══════════════════════════════════════
@@ -1047,13 +1188,17 @@ document.querySelectorAll('.b').forEach(card=>{
 let cmdBuffer='',cmdTimer=null;
 const commands={
   matrix:()=>{if(matrixActive)stopMatrix();else startMatrix();showToast('matrix '+(matrixActive?'ON':'OFF'));markEgg('matrix');},
-  neon:()=>{switchTheme('neon');showToast('neon activated');markEgg('neon');},
-  vaporwave:()=>{switchTheme('vaporwave');showToast('vaporwave activated');markEgg('vaporwave');},
-  vapor:()=>{switchTheme('vaporwave');showToast('vaporwave activated');markEgg('vaporwave');},
+  neon:()=>{switchTheme('neon');showToast('neon activated','success');markEgg('neon');},
+  vaporwave:()=>{switchTheme('vaporwave');showToast('vaporwave activated','success');markEgg('vaporwave');},
+  vapor:()=>{switchTheme('vaporwave');showToast('vaporwave activated','success');markEgg('vaporwave');},
+  midnight:()=>{switchTheme('midnight');showToast('midnight mode','success');markEgg('midnight');},
+  halloween:()=>{switchTheme('halloween');showToast('trick or treat 🎃','success');markEgg('halloween');},
+  xmas:()=>{switchTheme('christmas');showToast('ho ho ho 🎄','success');markEgg('christmas');},
+  christmas:()=>{switchTheme('christmas');showToast('ho ho ho 🎄','success');markEgg('christmas');},
   dark:()=>{switchTheme('dark');showToast('dark mode');},
   light:()=>{switchTheme('light');showToast('light mode');},
   reset:()=>{switchTheme('light');if(matrixActive)stopMatrix();showToast('reset to default');},
-  help:()=>{showToast('type: matrix, neon, vaporwave, dark, light, reset, secret, vibes, cool');},
+  help:()=>{showToast('matrix, neon, vapor, midnight, halloween, xmas, dark, light, reset');},
   whoami:()=>{showToast('you are a curious one');markEgg('whoami');},
   hello:()=>{showToast('hey :)');sfxDing();},
   secret:()=>{document.getElementById('secretSection').classList.add('show');document.getElementById('secretSection').scrollIntoView({behavior:'smooth'});showToast('secret revealed');markEgg('secret');},
@@ -1061,14 +1206,33 @@ const commands={
   cool:()=>{document.querySelectorAll('.b').forEach((c,i)=>{setTimeout(()=>{c.style.transition='transform 0.4s ease';c.style.transform='rotate('+(Math.random()*6-3)+'deg) scale(1.02)';setTimeout(()=>{c.style.transform='';},500);},i*60);});showToast('cool cool cool');markEgg('cool');},
   dance:()=>{document.querySelectorAll('.b').forEach((c,i)=>{setTimeout(()=>{c.style.transition='transform 0.3s ease';c.style.transform='translateY(-10px) rotate('+(i%2?5:-5)+'deg)';setTimeout(()=>{c.style.transform='';},300);},i*80);});showToast('dance!');markEgg('dance');},
   invert:()=>{document.documentElement.style.filter='invert(1) hue-rotate(180deg)';showToast('inverted');setTimeout(()=>{document.documentElement.style.filter='';},3000);markEgg('invert');},
-  party:()=>{spawnConfetti();showToast('party time!');markEgg('party');},
+  party:()=>{spawnConfetti();showToast('party time!','success');markEgg('party');},
   big:()=>{document.querySelectorAll('.b').forEach(c=>{c.style.transition='transform 0.3s';c.style.transform='scale(1.05)';});setTimeout(()=>{document.querySelectorAll('.b').forEach(c=>{c.style.transform='';});},2000);showToast('big mode');markEgg('big');},
   small:()=>{document.querySelectorAll('.b').forEach(c=>{c.style.transition='transform 0.3s';c.style.transform='scale(0.95)';});setTimeout(()=>{document.querySelectorAll('.b').forEach(c=>{c.style.transform='';});},2000);showToast('smol mode');markEgg('small');},
   spin:()=>{document.querySelectorAll('.b').forEach((c,i)=>{c.style.transition='transform 0.6s ease';c.style.transform='rotate(360deg)';setTimeout(()=>{c.style.transform='';},600);});showToast('spin!');markEgg('spin');},
+  rainbow:()=>{document.body.classList.add('rainbow-bg');showToast('🌈 rainbow!','success');setTimeout(()=>document.body.classList.remove('rainbow-bg'),5000);markEgg('rainbow');},
+  ghost:()=>{document.querySelectorAll('.b').forEach(c=>{c.style.transition='opacity 0.5s';c.style.opacity='0.1';});setTimeout(()=>{document.querySelectorAll('.b').forEach(c=>{c.style.opacity='';});},3000);showToast('👻 boo!');markEgg('ghost');},
+  flash:()=>{document.body.style.transition='background 0.1s';document.body.style.background='#fff';setTimeout(()=>{document.body.style.background='';},100);showToast('⚡ flash!');markEgg('flash');},
+  ascii:()=>{showToast('check the console');markEgg('ascii');
+    console.log('%c ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄ ', 'color:#6c47ff;font-size:10px;');
+    console.log('%c █ 12.LOG — THE FULL EXPERIENCE █ ', 'color:#ff6b6b;font-size:10px;');
+    console.log('%c █ musician · producer · builder  █ ', 'color:#00c9a7;font-size:10px;');
+    console.log('%c █ los angeles, ca                █ ', 'color:#ffd93d;font-size:10px;');
+    console.log('%c ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀ ', 'color:#6c47ff;font-size:10px;');},
+  credits:()=>{showToast('built with love and zero frameworks');markEgg('credits');},
+  12:()=>{showToast('that\'s me!');sfxDing();markEgg('12');},
+  about:()=>{document.querySelector('.b:last-child').scrollIntoView({behavior:'smooth'});showToast('scrolling to about');},
+  top:()=>{window.scrollTo({top:0,behavior:'smooth'});showToast('back to top');},
+  source:()=>{window.open('https://github.com/0124212/bento','_blank');showToast('opening source');},
+  404:()=>{document.documentElement.style.filter='grayscale(1) contrast(2)';showToast('page not found... just kidding');setTimeout(()=>{document.documentElement.style.filter='';},2000);markEgg('404');},
+  lol:()=>{showToast('haha, lmao even');markEgg('lol');},
+  ok:()=>{showToast('ok 👍');},
+  bruh:()=>{showToast('bruh moment');markEgg('bruh');},
+  noice:()=>{showToast('noice 👌');markEgg('noice');},
 };
 document.addEventListener('keydown',e=>{
   if(e.key==='Escape'){cmdBuffer='';return;}
-  if(e.key==='Enter'){const cmd=cmdBuffer.trim().toLowerCase();cmdBuffer='';if(commands[cmd]){sfxDing();commands[cmd];}return;}
+  if(e.key==='Enter'){const cmd=cmdBuffer.trim().toLowerCase();cmdBuffer='';if(commands[cmd]){sfxDing();commands[cmd]();}return;}
   if(e.key.length===1){cmdBuffer+=e.key;clearTimeout(cmdTimer);cmdTimer=setTimeout(()=>{cmdBuffer='';},1500);}
 });
 
@@ -1082,7 +1246,7 @@ checkSecret();window.addEventListener('hashchange',checkSecret);
 // 9. TAB TITLE CHANGE
 // ══════════════════════════════════════
 const origTitle = document.title;
-const awayMessages = ['come back 😢','miss you already','where did you go?','don\'t leave me alone','i\'m lonely out here'];
+const awayMessages = ['come back 😢','miss you already','where did you go?','don\'t leave me alone','i\'m lonely out here','12 misses you'];
 const awayMsg = awayMessages[Math.floor(Math.random()*awayMessages.length)];
 document.addEventListener('visibilitychange',()=>{
   if (document.hidden) { document.title = awayMsg; markEgg('tab'); }
@@ -1109,7 +1273,7 @@ if (window.DeviceMotionEvent) {
         setTimeout(()=>{document.body.style.transform='rotate(-2deg)';},100);
         setTimeout(()=>{document.body.style.transform='rotate(1deg)';},200);
         setTimeout(()=>{document.body.style.transform='';},300);
-        showToast('📱 you shook your phone!');
+        showToast('📱 you shook your phone!','success');
         markEgg('shake');
       }
     }
@@ -1126,6 +1290,9 @@ const rcMessages = [
   'this isn\'t that kind of site.',
   'inspect element? nice.',
   'devtools detected 👀',
+  'you found the right-click egg!',
+  'context menu? we don\'t do that here.',
+  'nice try. the real menu is the keyboard.',
 ];
 document.addEventListener('contextmenu', e => {
   e.preventDefault();
@@ -1186,9 +1353,7 @@ document.querySelectorAll('.social-pill').forEach(pill => {
 let wasHidden = false;
 document.addEventListener('visibilitychange', ()=>{
   if (!document.hidden && wasHidden) {
-    // subtle flash on return
     document.body.style.transition = 'background 0.15s';
-    const orig = getComputedStyle(document.body).backgroundColor;
     document.body.style.background = 'var(--accent)';
     setTimeout(()=>{ document.body.style.background = ''; }, 150);
     wasHidden = false;
@@ -1197,13 +1362,173 @@ document.addEventListener('visibilitychange', ()=>{
 });
 
 // ══════════════════════════════════════
-// CONSOLE
+// 17. RETRO VISITOR COUNTER
 // ══════════════════════════════════════
-console.log('%c 12.log ', 'background:#6c47ff;color:#fff;font-size:20px;padding:8px 16px;border-radius:6px;font-weight:bold;');
-console.log('%c musician · producer · builder ', 'color:#6e6b62;font-size:12px;');
-console.log('%c type "help" in the page for hidden commands ', 'color:#00c9a7;font-size:11px;');
-console.log('%c↑↑↓↓←→←→BA · #secret · shake your phone · right-click ', 'color:#ff6b6b;font-size:11px;');
-console.log('%c '+found.length+'/'+TOTAL_EGGS+' easter eggs found ', 'color:#ffd93d;font-size:11px;');
+(function(){
+  let count = parseInt(localStorage.getItem('12log_visits') || '0');
+  count++;
+  localStorage.setItem('12log_visits', count);
+  const el = document.getElementById('visitorNum');
+  if (el) el.textContent = String(count).padStart(6, '0');
+})();
+
+// ══════════════════════════════════════
+// 18. DATE-BASED THEMES
+// ══════════════════════════════════════
+(function(){
+  if (localStorage.getItem('theme')) return;
+  const now = new Date();
+  const month = now.getMonth() + 1;
+  const day = now.getDate();
+  if (month === 10 && day >= 25) { switchTheme('halloween'); }
+  else if (month === 12 && (day >= 20 || day <= 26)) { switchTheme('christmas'); }
+  else if (now.getHours() === 0 && now.getMinutes() < 5) {
+    showToast('🌙 it\'s midnight. the witching hour.', 'warn');
+    markEgg('midnight');
+  }
+})();
+
+// ══════════════════════════════════════
+// 19. J/K CARD NAVIGATION + Q TOGGLE
+// ══════════════════════════════════════
+let cardNavActive = false, cardIdx = 0;
+const allCards = document.querySelectorAll('.b');
+function highlightCard(idx) {
+  allCards.forEach(c => c.classList.remove('focused'));
+  if (idx >= 0 && idx < allCards.length) {
+    allCards[idx].classList.add('focused');
+    allCards[idx].scrollIntoView({behavior:'smooth', block:'center'});
+  }
+}
+document.addEventListener('keydown', e => {
+  if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+  if (e.key === 'q' && !cmdBuffer) { cardNavActive = !cardNavActive;
+    showToast(cardNavActive ? '🃏 card nav ON (j/k to move, q to exit)' : 'card nav OFF');
+    if (cardNavActive) { cardIdx = 0; highlightCard(cardIdx); }
+    else { allCards.forEach(c => c.classList.remove('focused')); }
+    markEgg('jk'); return;
+  }
+  if (cardNavActive && !cmdBuffer) {
+    if (e.key === 'j') { cardIdx = Math.min(cardIdx + 1, allCards.length - 1); highlightCard(cardIdx); sfxNav(); e.preventDefault(); }
+    if (e.key === 'k') { cardIdx = Math.max(cardIdx - 1, 0); highlightCard(cardIdx); sfxNav(); e.preventDefault(); }
+  }
+});
+
+// ══════════════════════════════════════
+// 20. PARALLAX MOUSE
+// ══════════════════════════════════════
+(function(){
+  const bento = document.querySelector('.bento');
+  if (!bento) return;
+  let ticking = false;
+  document.addEventListener('mousemove', e => {
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(() => {
+      const cx = (e.clientX / window.innerWidth - 0.5) * 2;
+      const cy = (e.clientY / window.innerHeight - 0.5) * 2;
+      bento.style.transform = `perspective(2000px) rotateY(${cx * 0.5}deg) rotateX(${-cy * 0.3}deg)`;
+      ticking = false;
+    });
+  });
+  document.addEventListener('mouseleave', () => { bento.style.transform = ''; });
+})();
+
+// ══════════════════════════════════════
+// 21. TIME-SPECIFIC SECRETS (12:00)
+// ══════════════════════════════════════
+(function(){
+  const la = new Date(new Date().toLocaleString('en-US',{timeZone:'America/Los_Angeles'}));
+  if (la.getHours() === 0 && la.getMinutes() === 0) {
+    showToast('🕛 midnight! you get a free easter egg.', 'success');
+    markEgg('midnight_exact');
+    spawnConfetti();
+  }
+  const seoul = new Date(new Date().toLocaleString('en-US',{timeZone:'Asia/Seoul'}));
+  if (seoul.getHours() === 12 && seoul.getMinutes() === 0) {
+    showToast('🕛 noon in seoul!', 'success');
+  }
+})();
+
+// ══════════════════════════════════════
+// 22. CARD COLOR DRIFT
+// ══════════════════════════════════════
+(function(){
+  const cards = document.querySelectorAll('.b');
+  setInterval(() => {
+    const i = Math.floor(Math.random() * cards.length);
+    const card = cards[i];
+    const hue = Math.random() * 360;
+    card.classList.add('drifting');
+    card.style.borderColor = `hsl(${hue}, 50%, 60%)`;
+    setTimeout(() => { card.style.borderColor = ''; }, 3000);
+  }, 8000);
+})();
+
+// ══════════════════════════════════════
+// 23. LONG PRESS (mobile)
+// ══════════════════════════════════════
+(function(){
+  let pressTimer = null, pressX = 0, pressY = 0;
+  document.addEventListener('touchstart', e => {
+    pressX = e.touches[0].clientX; pressY = e.touches[0].clientY;
+    pressTimer = setTimeout(() => {
+      const ripple = document.createElement('div');
+      ripple.className = 'lp-ripple';
+      ripple.style.left = pressX + 'px'; ripple.style.top = pressY + 'px';
+      document.body.appendChild(ripple);
+      setTimeout(() => ripple.remove(), 800);
+      sfxDing();
+      showToast('👆 long press detected!');
+      markEgg('longpress');
+    }, 600);
+  });
+  document.addEventListener('touchmove', () => { clearTimeout(pressTimer); });
+  document.addEventListener('touchend', () => { clearTimeout(pressTimer); });
+})();
+
+// ══════════════════════════════════════
+// 24. DOUBLE-CLICK EASTER EGG
+// ══════════════════════════════════════
+let lastDblClick = 0;
+document.addEventListener('dblclick', e => {
+  const now = Date.now();
+  if (now - lastDblClick < 3000) {
+    showToast('🔮 triple double-click!', 'success');
+    markEgg('doubleclick');
+    spawnConfetti();
+    sfxDing();
+  }
+  lastDblClick = now;
+});
+
+// ══════════════════════════════════════
+// 25. CONSOLE (mega version)
+// ══════════════════════════════════════
+console.log('%c ', 'font-size:40px');
+console.log('%c ███╗   ██╗███████╗████████╗', 'color:#6c47ff;font-size:14px;font-family:monospace;');
+console.log('%c ████╗  ██║██╔════╝╚══██╔══╝', 'color:#ff6b6b;font-size:14px;font-family:monospace;');
+console.log('%c ██╔██╗ ██║█████╗     ██║', 'color:#00c9a7;font-size:14px;font-family:monospace;');
+console.log('%c ██║╚██╗██║██╔══╝     ██║', 'color:#ffd93d;font-size:14px;font-family:monospace;');
+console.log('%c ██║ ╚████║███████╗   ██║', 'color:#ff85ff;font-size:14px;font-family:monospace;');
+console.log('%c ╚═╝  ╚═══╝╚══════╝   ╚═╝', 'color:#4ecdc4;font-size:14px;font-family:monospace;');
+console.log('%c .log', 'color:#6c47ff;font-size:14px;font-family:monospace;');
+console.log('%c ─────────────────────────────', 'color:#6e6b62;font-size:10px;');
+console.log('%c musician · producer · builder', 'color:#6e6b62;font-size:12px;');
+console.log('%c los angeles, ca', 'color:#6e6b62;font-size:11px;');
+console.log('%c ─────────────────────────────', 'color:#6e6b62;font-size:10px;');
+console.log('%c 30 easter eggs hidden in this page.', 'color:#00c9a7;font-size:11px;');
+console.log('%c type "help" on the page for commands.', 'color:#00c9a7;font-size:11px;');
+console.log('%c ↑↑↓↓←→←→BA', 'color:#ff6b6b;font-size:11px;');
+console.log('%c ' + found.length + '/' + TOTAL_EGGS + ' eggs found', 'color:#ffd93d;font-size:11px;');
+console.log('%c ─────────────────────────────', 'color:#6e6b62;font-size:10px;');
+console.log('%c this site has:', 'color:#6e6b62;font-size:10px;');
+console.log('%c · zero tracking', 'color:#6e6b62;font-size:10px;');
+console.log('%c · zero analytics', 'color:#6e6b62;font-size:10px;');
+console.log('%c · zero cookies', 'color:#6e6b62;font-size:10px;');
+console.log('%c · zero frameworks', 'color:#6e6b62;font-size:10px;');
+console.log('%c · just html, css, and js', 'color:#6e6b62;font-size:10px;');
+console.log('%c─────────────────────────────', 'color:#6e6b62;font-size:10px;');
 </script>
 </body>
 </html>
