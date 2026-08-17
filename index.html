@@ -481,10 +481,19 @@
 
   /* card tilt */
   .b.tilt {
-    transition: transform 0.1s ease, border-color 0.25s ease, background 0.25s ease;
+    transition: transform 0.5s cubic-bezier(0.23, 1, 0.32, 1), border-color 0.25s ease, background 0.25s ease;
+    cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24'%3E%3Crect x='10' y='2' width='4' height='4' fill='%2339c5bb'/%3E%3Crect x='6' y='6' width='4' height='4' fill='%2339c5bb'/%3E%3Crect x='14' y='6' width='4' height='4' fill='%2339c5bb'/%3E%3Crect x='2' y='10' width='4' height='4' fill='%2339c5bb'/%3E%3Crect x='10' y='10' width='4' height='4' fill='%23e94196'/%3E%3Crect x='18' y='10' width='4' height='4' fill='%2339c5bb'/%3E%3Crect x='6' y='14' width='4' height='4' fill='%2339c5bb'/%3E%3Crect x='14' y='14' width='4' height='4' fill='%2339c5bb'/%3E%3Crect x='10' y='18' width='4' height='4' fill='%2339c5bb'/%3E%3C/svg%3E") 12 12, pointer;
   }
   .b.tilt:hover {
     transform: none;
+  }
+
+  /* custom cursor for rest of page */
+  body {
+    cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20'%3E%3Crect x='8' y='0' width='4' height='4' fill='%2339c5bb'/%3E%3Crect x='4' y='4' width='4' height='4' fill='%2339c5bb'/%3E%3Crect x='12' y='4' width='4' height='4' fill='%2339c5bb'/%3E%3Crect x='0' y='8' width='4' height='4' fill='%2339c5bb'/%3E%3Crect x='8' y='8' width='4' height='4' fill='%23e94196'/%3E%3Crect x='16' y='8' width='4' height='4' fill='%2339c5bb'/%3E%3Crect x='4' y='12' width='4' height='4' fill='%2339c5bb'/%3E%3Crect x='12' y='12' width='4' height='4' fill='%2339c5bb'/%3E%3Crect x='8' y='16' width='4' height='4' fill='%2339c5bb'/%3E%3C/svg%3E") 10 10, auto;
+  }
+  a, button, .social-pill, .music-link, .proj-item {
+    cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24'%3E%3Crect x='10' y='2' width='4' height='4' fill='%23e94196'/%3E%3Crect x='6' y='6' width='4' height='4' fill='%23e94196'/%3E%3Crect x='14' y='6' width='4' height='4' fill='%23e94196'/%3E%3Crect x='2' y='10' width='4' height='4' fill='%23e94196'/%3E%3Crect x='10' y='10' width='4' height='4' fill='%2339c5bb'/%3E%3Crect x='18' y='10' width='4' height='4' fill='%23e94196'/%3E%3Crect x='6' y='14' width='4' height='4' fill='%23e94196'/%3E%3Crect x='14' y='14' width='4' height='4' fill='%23e94196'/%3E%3Crect x='10' y='18' width='4' height='4' fill='%23e94196'/%3E%3C/svg%3E") 12 12, pointer;
   }
 
   /* secret section */
@@ -1178,7 +1187,7 @@ function stopMatrix(){matrixActive=false;matrixCanvas.classList.remove('active')
 document.querySelectorAll('.b').forEach(card=>{
   card.classList.add('tilt');
   card.addEventListener('mousemove',e=>{const r=card.getBoundingClientRect();const rx=((e.clientY-r.top)/r.height-0.5)*-9;const ry=((e.clientX-r.left)/r.width-0.5)*9;card.style.transform=`perspective(600px) rotateX(${rx}deg) rotateY(${ry}deg) translateY(-3px)`;});
-  card.addEventListener('mouseleave',()=>{card.style.transform='';});
+  card.addEventListener('mouseleave',()=>{card.style.transition='transform 0.5s cubic-bezier(0.23, 1, 0.32, 1)';card.style.transform='';setTimeout(()=>{card.style.transition='';},500);});
   card.addEventListener('mouseenter',()=>{sfxHover();});
 });
 
