@@ -1,0 +1,4 @@
+--db
+.task-prompt.txt
+node_modules/
+*.log
