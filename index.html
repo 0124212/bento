@@ -1077,6 +1077,16 @@
 
   /* text scramble */
   .scramble-hover { cursor: default; }
+  /* confetti burst (5 dots) */
+  .confetti{display:flex;gap:8px;justify-content:center;margin:32px 0 0;pointer-events:none}
+  .confetti span{display:inline-block;width:10px;height:10px;border-radius:50%}
+  .confetti span{animation:confetti 1.2s forwards}
+  .confetti span:nth-child(1){background:#7dd3fc;animation-delay:0s}
+  .confetti span:nth-child(2){background:#ff6b6b;animation-delay:.1s}
+  .confetti span:nth-child(3){background:#00c9a7;animation-delay:.2s}
+  .confetti span:nth-child(4){background:#ffd93d;animation-delay:.3s}
+  .confetti span:nth-child(5){background:#ff85ff;animation-delay:.4s}
+  @keyframes confetti{to{transform:rotate(720deg) translateY(60px);opacity:0}}
 </style>
 </head>
 <!-- 🥚 you're reading the source? you're already cool. -->
@@ -1523,6 +1533,7 @@
       </div>
     </div>
   </div>
+  <div class=confetti><span></span><span></span><span></span><span></span><span></span></div>
 
   <footer>
     <div class="visitor-counter">visitor #<span class="digits" id="visitorNum">000000</span></div>
