@@ -1,5 +1,7 @@
 # bento — 12.log
 
+[![HTML](https://img.shields.io/badge/html-%23E34F26.svg?style=flat-square&logo=html5&logoColor=white)](./index.html) [![CSS](https://img.shields.io/badge/css-%231572B6.svg?style=flat-square&logo=css3&logoColor=white)](./index.html) [![Cloudflare Pages](https://img.shields.io/badge/cloudflare_pages-F38020?style=flat-square&logo=cloudflarepages&logoColor=white)](https://pages.cloudflare.com) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=flat-square)](./LICENSE)
+
 Single-HTML personal landing page. Zero frameworks, zero tracking, zero analytics, zero cookies — just `index.html` + CSS + a little JS. Deployed to Cloudflare Pages.
 
 Live: `12.log` · Source: this repo
